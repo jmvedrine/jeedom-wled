@@ -20,149 +20,177 @@
 require_once __DIR__  . '/../../../../core/php/core.inc.php';
 
 class wled extends eqLogic {
-    /*     * *************************Attributs****************************** */
-    
+	/*	   * *************************Attributs****************************** */
+	
   /*
    * Permet de définir les possibilités de personnalisation du widget (en cas d'utilisation de la fonction 'toHtml' par exemple)
    * Tableau multidimensionnel - exemple: array('custom' => true, 'custom::layout' => false)
 	public static $_widgetPossibility = array();
    */
-    
-    /*     * ***********************Methode static*************************** */
+	
+	/*	   * ***********************Methode static*************************** */
+	public static function request($_ip,$_request = '',$_data = null,$_type='GET'){
+		$url = 'http://'.$ip.$_request;
+		if($_type=='GET' && is_array($_data) && count($_data) > 0){
+		  $url .= '?';
+		  foreach ($_data as $key => $value) {
+			$url .= $key.'='.urlencode($value).'&';
+		  }
+		  $url = trim($url,'&');
+		}
+		log::add('wled','debug',' url : '.$url);
+		log::add('wled','debug',' data : '.json_encode($_data));
+		$request_http = new com_http($url);
+		$request_http->setHeader(array(
+		  'Content-Type: application/json'
+		));
+		if($_data !== null){
+		  if($_type == 'POST'){
+			$request_http->setPost(json_encode($_data));
+		  }elseif($_type == 'PUT'){
+			$request_http->setPut(json_encode($_data));
+		  }
+		}
+		$result = $request_http->exec(60,1);
+		$result = is_json($result, $result);
+		if(!isset($result['state']) || $result['state'] != 'ok'){
+		  throw new \Exception(__('Erreur lors de la requete : ',__FILE__).$url.'('.$_type.'), data : '.json_encode($_data).' erreur : '.json_encode($result));
+		}
+		return isset($result['result']) ? $result['result'] : $result;
+	}
+	/*
+	 * Fonction exécutée automatiquement toutes les minutes par Jeedom
+	  public static function cron() {
+	  }
+	 */
 
-    /*
-     * Fonction exécutée automatiquement toutes les minutes par Jeedom
-      public static function cron() {
-      }
-     */
+	/*
+	 * Fonction exécutée automatiquement toutes les 5 minutes par Jeedom
+	  public static function cron5() {
+	  }
+	 */
 
-    /*
-     * Fonction exécutée automatiquement toutes les 5 minutes par Jeedom
-      public static function cron5() {
-      }
-     */
+	/*
+	 * Fonction exécutée automatiquement toutes les 10 minutes par Jeedom
+	  public static function cron10() {
+	  }
+	 */
+	
+	/*
+	 * Fonction exécutée automatiquement toutes les 15 minutes par Jeedom
+	  public static function cron15() {
+	  }
+	 */
+	
+	/*
+	 * Fonction exécutée automatiquement toutes les 30 minutes par Jeedom
+	  public static function cron30() {
+	  }
+	 */
+	
+	/*
+	 * Fonction exécutée automatiquement toutes les heures par Jeedom
+	  public static function cronHourly() {
+	  }
+	 */
 
-    /*
-     * Fonction exécutée automatiquement toutes les 10 minutes par Jeedom
-      public static function cron10() {
-      }
-     */
-    
-    /*
-     * Fonction exécutée automatiquement toutes les 15 minutes par Jeedom
-      public static function cron15() {
-      }
-     */
-    
-    /*
-     * Fonction exécutée automatiquement toutes les 30 minutes par Jeedom
-      public static function cron30() {
-      }
-     */
-    
-    /*
-     * Fonction exécutée automatiquement toutes les heures par Jeedom
-      public static function cronHourly() {
-      }
-     */
-
-    /*
-     * Fonction exécutée automatiquement tous les jours par Jeedom
-      public static function cronDaily() {
-      }
-     */
+	/*
+	 * Fonction exécutée automatiquement tous les jours par Jeedom
+	  public static function cronDaily() {
+	  }
+	 */
 
 
 
-    /*     * *********************Méthodes d'instance************************* */
-    
+	/*	   * *********************Méthodes d'instance************************* */
+	
  // Fonction exécutée automatiquement avant la création de l'équipement 
-    public function preInsert() {
-        
-    }
+	public function preInsert() {
+		
+	}
 
  // Fonction exécutée automatiquement après la création de l'équipement 
-    public function postInsert() {
-        
-    }
+	public function postInsert() {
+		
+	}
 
  // Fonction exécutée automatiquement avant la mise à jour de l'équipement 
-    public function preUpdate() {
-        
-    }
+	public function preUpdate() {
+		
+	}
 
  // Fonction exécutée automatiquement après la mise à jour de l'équipement 
-    public function postUpdate() {
-        
-    }
+	public function postUpdate() {
+		
+	}
 
  // Fonction exécutée automatiquement avant la sauvegarde (création ou mise à jour) de l'équipement 
-    public function preSave() {
-        
-    }
+	public function preSave() {
+		
+	}
 
  // Fonction exécutée automatiquement après la sauvegarde (création ou mise à jour) de l'équipement 
-    public function postSave() {
-        
-    }
+	public function postSave() {
+		
+	}
 
  // Fonction exécutée automatiquement avant la suppression de l'équipement 
-    public function preRemove() {
-        
-    }
+	public function preRemove() {
+		
+	}
 
  // Fonction exécutée automatiquement après la suppression de l'équipement 
-    public function postRemove() {
-        
-    }
+	public function postRemove() {
+		
+	}
 
-    /*
-     * Non obligatoire : permet de modifier l'affichage du widget (également utilisable par les commandes)
-      public function toHtml($_version = 'dashboard') {
+	/*
+	 * Non obligatoire : permet de modifier l'affichage du widget (également utilisable par les commandes)
+	  public function toHtml($_version = 'dashboard') {
 
-      }
-     */
+	  }
+	 */
 
-    /*
-     * Non obligatoire : permet de déclencher une action après modification de variable de configuration
-    public static function postConfig_<Variable>() {
-    }
-     */
+	/*
+	 * Non obligatoire : permet de déclencher une action après modification de variable de configuration
+	public static function postConfig_<Variable>() {
+	}
+	 */
 
-    /*
-     * Non obligatoire : permet de déclencher une action avant modification de variable de configuration
-    public static function preConfig_<Variable>() {
-    }
-     */
+	/*
+	 * Non obligatoire : permet de déclencher une action avant modification de variable de configuration
+	public static function preConfig_<Variable>() {
+	}
+	 */
 
-    /*     * **********************Getteur Setteur*************************** */
+	/*	   * **********************Getteur Setteur*************************** */
 }
 
 class wledCmd extends cmd {
-    /*     * *************************Attributs****************************** */
-    
-    /*
-      public static $_widgetPossibility = array();
-    */
-    
-    /*     * ***********************Methode static*************************** */
+	/*	   * *************************Attributs****************************** */
+	
+	/*
+	  public static $_widgetPossibility = array();
+	*/
+	
+	/*	   * ***********************Methode static*************************** */
 
 
-    /*     * *********************Methode d'instance************************* */
+	/*	   * *********************Methode d'instance************************* */
 
-    /*
-     * Non obligatoire permet de demander de ne pas supprimer les commandes même si elles ne sont pas dans la nouvelle configuration de l'équipement envoyé en JS
-      public function dontRemoveCmd() {
-      return true;
-      }
-     */
+	/*
+	 * Non obligatoire permet de demander de ne pas supprimer les commandes même si elles ne sont pas dans la nouvelle configuration de l'équipement envoyé en JS
+	  public function dontRemoveCmd() {
+	  return true;
+	  }
+	 */
 
   // Exécution d'une commande  
-     public function execute($_options = array()) {
-        
-     }
+	 public function execute($_options = array()) {
+		
+	 }
 
-    /*     * **********************Getteur Setteur*************************** */
+	/*	   * **********************Getteur Setteur*************************** */
 }
 
 

@@ -25,7 +25,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 				<span>{{Configuration}}</span>
 			</div>
 		</div>
-		<legend><i class="fas fa-table"></i> {{Mes LEDS}}</legend>
+		<legend><i class="fas fa-table"></i> {{Mes WLEDS}}</legend>
 		<?php
 		if (count($eqLogics) == 0) {
 			echo '<br/><div class="text-center" style="font-size:1.2em;font-weight:bold;">{{Aucun équipement WLED n\'est paramétré, cliquer sur "Ajouter" pour commencer}}</div>';
@@ -125,15 +125,9 @@ $eqLogics = eqLogic::byType($plugin->getId());
 
 							<legend><i class="fas fa-cogs"></i> {{Paramètres}}</legend>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">{{Nom du paramètre n°1}}</label>
+								<label class="col-sm-3 control-label">{{Adresse IP}}</label>
 								<div class="col-sm-7">
-									<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="param1" placeholder="{{Paramètre n°1}}"/>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label"> {{Mot de passe}}</label>
-								<div class="col-sm-7">
-									<input type="text" class="eqLogicAttr form-control inputPassword" data-l1key="configuration" data-l2key="password"/>
+									<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="IpAdress" placeholder="{{192.168.x.x}}"/>
 								</div>
 							</div>
 							<!-- Champ de saisie du cron d'auto-actualisation + assistant cron -->
