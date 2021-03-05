@@ -1,0 +1,19 @@
+{
+	"id" : "wled",
+	"name" : "WLED",
+	"description" : {
+		"fr_FR": "Plugin Jeedom servant à commander le pilote de led adressables WLED (voir https://github.com/Aircoookie/WLED et https://github.com/Aircoookie/WLED/wiki)",
+		"en_US": "Jeedom plugin to with the WLED digital led controller (see https://github.com/Aircoookie/WLED and https://github.com/Aircoookie/WLED/wiki)"
+	},
+	"licence" : "AGPL",
+	"author" : "Jean-Michel Vedrine",
+	"require" : "3.3.39",
+	"category" : "devicecommunication",
+	"hasDependency" : false,
+	"hasOwnDeamon" : false,
+	"maxDependancyInstallTime" : 0,
+	"changelog" : "https://jmvedrine.github.io/plugin-wled/#language#/changelog",
+	"documentation" : "https://jmvedrine.github.io/plugin-wled/#language#/",
+	"language" : ["fr_FR","en_US","de_DE","sp_SP"],
+	"compatibility" : ["miniplus","smart","rpi","docker","diy","mobile","v4"]
+}
