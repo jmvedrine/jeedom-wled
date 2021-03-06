@@ -39,7 +39,22 @@ Note : le plugin fonctionne en local sur votre réseau Wifi. il est totalement i
 Configuration du plugin
 ===
 
+Rien de spécial il suffit juste d'installer le plugin comme n'importe quel plugin Jeedom et de l'activer
+
 Création des équipements
 ===
 
+Pour chaque équipement en plus des informations habituelles communes à tous les équipements dans les plugins Jeedom, vous devez préciser
+
+- l'adresse IP du contrôleur (en général sous la forme 192.168.x.x)
+- l'intervalle de rafraîchissement (auto-actualisation) des informations de l'équipement sous la forme d'une expression cron. N'hésitez pas à cliquer sur le petit bouton ? à droite si vous n'êtes pas familier avec les expressions cron et l'assistant fera le boulot pour vous.
+
+Sauvegardez. Voila c'est fini.
+
+Dans l'avenir si je peux je prévois d'ajouter une fonction de découverte des contrôleurs sur le réseau local. Mais bon à moins d'avoir une multitude de contrôleurs ce n'est pas insurmontable de rentrer les adresses IP à la main.
+
+Commandes
+===
+
+Pour le moment le nombre de commandes disponibles dans cette première version est faible. le plugin s'enrichira par la suite.
 
