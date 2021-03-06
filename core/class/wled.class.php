@@ -29,8 +29,8 @@ class wled extends eqLogic {
    */
 	
 	/*	   * ***********************Methode static*************************** */
-	public static function request($_ip,$_request = '',$_data = null,$_type='GET'){
-		$url = 'http://'.$ip.$_request;
+	public static function request($_ip,$_endpoint = '',$_data = null,$_type='GET'){
+		$url = 'http://'.$ip.$_endpoint;
 		if($_type=='GET' && is_array($_data) && count($_data) > 0){
 		  $url .= '?';
 		  foreach ($_data as $key => $value) {
@@ -60,9 +60,29 @@ class wled extends eqLogic {
 	}
 	/*
 	 * Fonction exécutée automatiquement toutes les minutes par Jeedom
-	  public static function cron() {
-	  }
 	 */
+	public static function cron() {
+		foreach (self::byType('wled') as $eqLogic) {
+            $cron_isEnable = $eqLogic->getConfiguration('cron_isEnable', 0);
+            $autorefresh = $eqLogic->getConfiguration('autorefresh', '');
+			$ipAddress = $eqLogic->getConfiguration('ipaddress', '');
+            if ($eqLogic->getIsEnable() == 1 && $cron_isEnable == 1 && $autorefresh != '' && $autorefresh != '') {
+                try {
+                    $c = new Cron\CronExpression($autorefresh, new Cron\FieldFactory);
+                    if ($c->isDue()) {
+                        try {
+                            $eqLogic->getWledStatus();
+                            $eqLogic->refreshWidget();
+                        } catch (Exception $exc) {
+                            log::add('wled', 'error', __('Error in ', __FILE__) . $eqLogic->getHumanName() . ' : ' . $exc->getMessage());
+                        }
+                    }
+                } catch (Exception $exc) {
+                    log::add('wled', 'error', __('Expression cron non valide pour ', __FILE__) . $eqLogic->getHumanName() . ' : ' . $autorefresh);
+                }
+            }
+        }
+    }
 
 	/*
 	 * Fonction exécutée automatiquement toutes les 5 minutes par Jeedom
@@ -131,7 +151,118 @@ class wled extends eqLogic {
 
  // Fonction exécutée automatiquement après la sauvegarde (création ou mise à jour) de l'équipement 
 	public function postSave() {
-		
+        // Création des commandes
+
+	    $onCmd = $this->getCmd(null, "on");
+	    if (!is_object($onCmd)) {
+            $onCmd = new wledCmd();
+            $onCmd->setName(__('On', __FILE__));
+            $onCmd->setEqLogic_id($this->getId());
+            $onCmd->setLogicalId('on');
+            $onCmd->setType('action');
+            $onCmd->setSubType('other');
+            $onCmd->setGeneric_type('LIGHT_ON');
+            $onCmd->setIsVisible(1);
+            $onCmd->setValue('on');
+            $onCmd->setDisplay('icon','<i class="icon jeedom-lumiere-on"></i>');
+            $onCmd->setOrder(0);
+            $onCmd->save();
+        }
+
+        $offCmd = $this->getCmd(null, "off");
+        if (!is_object($offCmd)) {
+            $offCmd = new wledCmd();
+        	$offCmd->setName(__('Off', __FILE__));
+        	$offCmd->setEqLogic_id($this->getId());
+        	$offCmd->setLogicalId('off');
+        	$offCmd->setType('action');
+        	$offCmd->setSubType('other');
+            $offCmd->setGeneric_type('LIGHT_OFF');
+        	$offCmd->setIsVisible(1);
+        	$offCmd->setValue('off');
+            $offCmd->setDisplay('icon','<i class="icon jeedom-lumiere-off"></i>');
+        	$offCmd->setOrder(1);
+        	$offCmd->save();
+        }
+        $stateCmd = $this->getCmd(null, "state");
+        if (!is_object($stateCmd)) {
+            $stateCmd = new wledCmd();
+        	$stateCmd->setName(__('Etat', __FILE__));
+        	$stateCmd->setEqLogic_id($this->getId());
+        	$stateCmd->setLogicalId('state');
+        	$stateCmd->setType('info');
+        	$stateCmd->setSubType('binary');
+            $stateCmd->setGeneric_type('LIGHT_STATE');
+            $stateCmd->setIsVisible(0);
+        	$stateCmd->setOrder(2);
+            $stateCmd->save();
+        } 
+        $brightnessCmd = $this->getCmd(null, "brightness");
+        if (!is_object($brightnessCmd)) {
+            $brightnessCmd = new wledCmd();
+        	$brightnessCmd->setName(__('Luminosité', __FILE__));
+        	$brightnessCmd->setEqLogic_id($this->getId());
+        	$brightnessCmd->setLogicalId('brightness');
+        	$brightnessCmd->setType('action');
+        	$brightnessCmd->setSubType('slider');
+            $brightnessCmd->setGeneric_type('LIGHT_SLIDER');
+            $brightnessCmd->setConfiguration('minValue','0');
+            $brightnessCmd->setConfiguration('maxValue','100');
+            $brightnessCmd->setConfiguration('lastCmdValue','100');
+            $brightnessCmd->setIsVisible(1);
+        	$brightnessCmd->setOrder(3);
+        	$brightnessCmd->save();
+        }
+        
+        $brightnessStateCmd = $this->getCmd(null, "brightness_state");
+        if (!is_object($brightnessStateCmd)) {
+            $brightnessStateCmd = new wledCmd();
+        	$brightnessStateCmd->setName(__('Etat Luminosité', __FILE__));
+        	$brightnessStateCmd->setEqLogic_id($this->getId());
+        	$brightnessStateCmd->setLogicalId('brightness_state');
+        	$brightnessStateCmd->setType('info');
+        	$brightnessStateCmd->setSubType('numeric');
+            $brightnessStateCmd->setGeneric_type('LIGHT_STATE');
+            $brightnessStateCmd->setIsVisible(0);
+        	$brightnessStateCmd->setOrder(4);
+            $brightnessStateCmd->save();
+        } 
+        $colorCmd = $this->getCmd(null, "color");
+        if (!is_object($colorCmd)) {
+            $colorCmd = new wledCmd();
+        	$colorCmd->setName(__('Couleur', __FILE__));
+        	$colorCmd->setEqLogic_id($this->getId());
+        	$colorCmd->setLogicalId('color');
+        	$colorCmd->setType('action');
+        	$colorCmd->setSubType('color');
+            $colorCmd->setGeneric_type('LIGHT_SET_COLOR');
+            $colorCmd->setIsVisible(1);
+        	$colorCmd->setOrder(5);
+        	$colorCmd->save();
+        }
+        
+        $colorStateCmd = $this->getCmd(null, "color_state");
+        if (!is_object($colorStateCmd)) {
+            $colorStateCmd = new wledCmd();
+        	$colorStateCmd->setName(__('Etat Couleur', __FILE__));
+        	$colorStateCmd->setEqLogic_id($this->getId());
+        	$colorStateCmd->setLogicalId('brightness_state');
+        	$colorStateCmd->setType('info');
+        	$colorStateCmd->setSubType('string');
+            $colorStateCmd->setGeneric_type('LIGHT_COLOR');
+            $colorStateCmd->setIsVisible(0);
+        	$colorStateCmd->setOrder(6);
+            $colorStateCmd->save();
+        } 
+        // Liens entre les commandes
+        $onCmd->setValue($stateCmd->getId());
+        $onCmd->save();
+        $offCmd->setValue($stateCmd->getId());
+        $offCmd->save();
+        $brightnessCmd->setValue($brightnessStateCmd->getId());
+        $brightnessCmd->save();
+        $colorCmd->setValue($colorStateCmd->getId());
+        $colorCmd->save();
 	}
 
  // Fonction exécutée automatiquement avant la suppression de l'équipement 
@@ -164,6 +295,9 @@ class wled extends eqLogic {
 	 */
 
 	/*	   * **********************Getteur Setteur*************************** */
+	public function getWledStatus() {
+        log::add('wled', 'debug', 'Running getWledStatus');
+	}
 }
 
 class wledCmd extends cmd {
