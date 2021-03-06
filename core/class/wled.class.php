@@ -32,25 +32,28 @@ class wled extends eqLogic {
 	public static function request($_ip,$_endpoint = '',$_data = null,$_type='GET'){
 		$url = 'http://' . $_ip . $_endpoint;
 		if($_type=='GET' && is_array($_data) && count($_data) > 0){
-		  $url .= '?';
+		  $url .= '&';
 		  foreach ($_data as $key => $value) {
 			$url .= $key.'='.urlencode($value).'&';
 		  }
 		  $url = trim($url,'&');
+		  $request_http = new com_http($url);
+		} else {
+			$request_http = new com_http($url);
+			$request_http->setHeader(array(
+			  'Content-Type: application/json'
+			));
+			if($_data !== null){
+			  if($_type == 'POST'){
+				$request_http->setPost(json_encode($_data));
+			  }elseif($_type == 'PUT'){
+				$request_http->setPut(json_encode($_data));
+			  }
+			}
 		}
 		log::add('wled','debug',' url : '.$url);
-		log::add('wled','debug',' data : '.json_encode($_data));
-		$request_http = new com_http($url);
-		$request_http->setHeader(array(
-		  'Content-Type: application/json'
-		));
-		if($_data !== null){
-		  if($_type == 'POST'){
-			$request_http->setPost(json_encode($_data));
-		  }elseif($_type == 'PUT'){
-			$request_http->setPut(json_encode($_data));
-		  }
-		}
+
+		
 		$result = $request_http->exec(60,1);
 		return $result;
 	}
@@ -160,6 +163,8 @@ class wled extends eqLogic {
             $onCmd->setIsVisible(1);
             $onCmd->setValue('on');
             $onCmd->setDisplay('icon','<i class="icon jeedom-lumiere-on"></i>');
+			$onCmd->setTemplate('dashboard', 'light');
+			$onCmd->setTemplate('mobile', 'light');
             $onCmd->setOrder(0);
             $onCmd->save();
         }
@@ -176,6 +181,8 @@ class wled extends eqLogic {
         	$offCmd->setIsVisible(1);
         	$offCmd->setValue('off');
             $offCmd->setDisplay('icon','<i class="icon jeedom-lumiere-off"></i>');
+			$offCmd->setTemplate('dashboard', 'light');
+			$offCmd->setTemplate('mobile', 'light');
         	$offCmd->setOrder(1);
         	$offCmd->save();
         }
@@ -202,8 +209,7 @@ class wled extends eqLogic {
         	$brightnessCmd->setSubType('slider');
             $brightnessCmd->setGeneric_type('LIGHT_SLIDER');
             $brightnessCmd->setConfiguration('minValue','0');
-            $brightnessCmd->setConfiguration('maxValue','100');
-            $brightnessCmd->setConfiguration('lastCmdValue','100');
+            $brightnessCmd->setConfiguration('maxValue','255');
             $brightnessCmd->setIsVisible(1);
         	$brightnessCmd->setOrder(3);
         	$brightnessCmd->save();
@@ -296,6 +302,24 @@ class wled extends eqLogic {
 		$ipAddress = $this->getConfiguration('ip_address');
 		$result = wled::request($ipAddress, $endPoint, null, 'GET');
 		log::add('wled', 'debug', 'request result '. $result);
+		$result = is_json($result, $result);
+		if (is_array($result)) {
+			$this->applyState($result);
+		}
+	}
+	public function applyState($result) {
+		log::add('wled', 'debug', 'applyState for '. print_r($result, true));
+		$info = $result['on'];
+        log::add('elmtouch', 'info', 'on ' . $info);
+        if ($info) {
+            $this->checkAndUpdateCmd('state', 1);
+        } else {
+            $this->checkAndUpdateCmd('state', 0);
+        }
+        $info = $result['bri'];
+        log::add('elmtouch', 'info', 'bri ' . $info);
+        $this->checkAndUpdateCmd('brightness_state', $info);
+
 	}
 }
 
@@ -320,7 +344,23 @@ class wledCmd extends cmd {
 
   // Exécution d'une commande  
 	 public function execute($_options = array()) {
-		
+        if ($this->getType() != 'action') {
+            return;
+        }
+		$eqLogic = $this->getEqLogic();
+		$action= $this->getLogicalId();
+		if ($action == 'on') {
+			$data = array('T' => 1);
+		} else if ($action == 'off') {
+			$data = array('T' => 0);
+		} else if ($action == 'brightness') {
+			$data = array('A' => $_options['slider']);
+		}
+		$endPoint ='/win';
+		$ipAddress = $eqLogic->getConfiguration('ip_address');
+		$result = wled::request($ipAddress, $endPoint, $data, 'GET');
+		log::add('wled', 'debug', 'request result '. $result);
+		$eqLogic->getWledStatus();
 	 }
 
 	/*	   * **********************Getteur Setteur*************************** */
