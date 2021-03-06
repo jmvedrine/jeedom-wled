@@ -30,7 +30,7 @@ class wled extends eqLogic {
 	
 	/*	   * ***********************Methode static*************************** */
 	public static function request($_ip,$_endpoint = '',$_data = null,$_type='GET'){
-		$url = 'http://'.$ip.$_endpoint;
+		$url = 'http://' . $_ip . $_endpoint;
 		if($_type=='GET' && is_array($_data) && count($_data) > 0){
 		  $url .= '?';
 		  foreach ($_data as $key => $value) {
@@ -52,21 +52,16 @@ class wled extends eqLogic {
 		  }
 		}
 		$result = $request_http->exec(60,1);
-		$result = is_json($result, $result);
-		if(!isset($result['state']) || $result['state'] != 'ok'){
-		  throw new \Exception(__('Erreur lors de la requete : ',__FILE__).$url.'('.$_type.'), data : '.json_encode($_data).' erreur : '.json_encode($result));
-		}
-		return isset($result['result']) ? $result['result'] : $result;
+		return $result;
 	}
 	/*
 	 * Fonction exécutée automatiquement toutes les minutes par Jeedom
 	 */
 	public static function cron() {
 		foreach (self::byType('wled') as $eqLogic) {
-            $cron_isEnable = $eqLogic->getConfiguration('cron_isEnable', 0);
             $autorefresh = $eqLogic->getConfiguration('autorefresh', '');
-			$ipAddress = $eqLogic->getConfiguration('ipaddress', '');
-            if ($eqLogic->getIsEnable() == 1 && $cron_isEnable == 1 && $autorefresh != '' && $autorefresh != '') {
+			$ipAddress = $eqLogic->getConfiguration('ip_address');
+            if ($eqLogic->getIsEnable() == 1 && $ipAddress != '' && $autorefresh != '') {
                 try {
                     $c = new Cron\CronExpression($autorefresh, new Cron\FieldFactory);
                     if ($c->isDue()) {
@@ -246,7 +241,7 @@ class wled extends eqLogic {
             $colorStateCmd = new wledCmd();
         	$colorStateCmd->setName(__('Etat Couleur', __FILE__));
         	$colorStateCmd->setEqLogic_id($this->getId());
-        	$colorStateCmd->setLogicalId('brightness_state');
+        	$colorStateCmd->setLogicalId('color_state');
         	$colorStateCmd->setType('info');
         	$colorStateCmd->setSubType('string');
             $colorStateCmd->setGeneric_type('LIGHT_COLOR');
@@ -297,6 +292,10 @@ class wled extends eqLogic {
 	/*	   * **********************Getteur Setteur*************************** */
 	public function getWledStatus() {
         log::add('wled', 'debug', 'Running getWledStatus');
+		$endPoint ='/json/state';
+		$ipAddress = $this->getConfiguration('ip_address');
+		$result = wled::request($ipAddress, $endPoint, null, 'GET');
+		log::add('wled', 'debug', 'request result '. $result);
 	}
 }
 
