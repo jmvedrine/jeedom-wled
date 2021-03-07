@@ -31,14 +31,18 @@ class wled extends eqLogic {
 	/*	   * ***********************Methode static*************************** */
 	public static function request($_ip,$_endpoint = '',$_data = null,$_type='GET'){
 		$url = 'http://' . $_ip . $_endpoint;
+		log::add('wled','debug','Request method : '.$_type);
+		log::add('wled','debug','Request data : '.print_r($_data,true));
 		if($_type=='GET' && is_array($_data) && count($_data) > 0){
 		  $url .= '&';
 		  foreach ($_data as $key => $value) {
 			$url .= $key.'='.urlencode($value).'&';
 		  }
 		  $url = trim($url,'&');
+		  log::add('wled','debug','GET request with url : '.$url);
 		  $request_http = new com_http($url);
 		} else {
+			log::add('wled','debug','non GET request with url : '.$url);
 			$request_http = new com_http($url);
 			$request_http->setHeader(array(
 			  'Content-Type: application/json'
@@ -51,7 +55,7 @@ class wled extends eqLogic {
 			  }
 			}
 		}
-		log::add('wled','debug',' url : '.$url);
+
 
 		
 		$result = $request_http->exec(60,1);
@@ -281,6 +285,62 @@ class wled extends eqLogic {
 			$effectStateCmd->setOrder(8);
 			$effectStateCmd->save();
 		}
+		$speedCmd = $this->getCmd(null, "speed");
+		if (!is_object($speedCmd)) {
+			$speedCmd = new wledCmd();
+			$speedCmd->setName(__('Vitesse effet', __FILE__));
+			$speedCmd->setEqLogic_id($this->getId());
+			$speedCmd->setLogicalId('speed');
+			$speedCmd->setType('action');
+			$speedCmd->setSubType('slider');
+			$speedCmd->setGeneric_type('DONT');
+			$speedCmd->setConfiguration('minValue','0');
+			$speedCmd->setConfiguration('maxValue','255');
+			$speedCmd->setIsVisible(1);
+			$speedCmd->setOrder(9);
+			$speedCmd->save();
+		}
+		$speedStateCmd = $this->getCmd(null, "speed_state");
+		if (!is_object($speedStateCmd)) {
+			$speedStateCmd = new wledCmd();
+			$speedStateCmd->setName(__('Etat vitesse effet', __FILE__));
+			$speedStateCmd->setEqLogic_id($this->getId());
+			$speedStateCmd->setLogicalId('speed_state');
+			$speedStateCmd->setType('info');
+			$speedStateCmd->setSubType('numeric');
+			$speedStateCmd->setGeneric_type('DONT');
+			$speedStateCmd->setIsVisible(0);
+			$speedStateCmd->setOrder(10);
+			$speedStateCmd->save();
+		}
+		$intensityCmd = $this->getCmd(null, "intensity");
+		if (!is_object($intensityCmd)) {
+			$intensityCmd = new wledCmd();
+			$intensityCmd->setName(__('Intensité effet', __FILE__));
+			$intensityCmd->setEqLogic_id($this->getId());
+			$intensityCmd->setLogicalId('intensity');
+			$intensityCmd->setType('action');
+			$intensityCmd->setSubType('slider');
+			$intensityCmd->setGeneric_type('DONT');
+			$intensityCmd->setConfiguration('minValue','0');
+			$intensityCmd->setConfiguration('maxValue','255');
+			$intensityCmd->setIsVisible(1);
+			$intensityCmd->setOrder(11);
+			$intensityCmd->save();
+		}
+		$intensityStateCmd = $this->getCmd(null, "intensity_state");
+		if (!is_object($intensityStateCmd)) {
+			$intensityStateCmd = new wledCmd();
+			$intensityStateCmd->setName(__('Etat intensité effet', __FILE__));
+			$intensityStateCmd->setEqLogic_id($this->getId());
+			$intensityStateCmd->setLogicalId('intensity_state');
+			$intensityStateCmd->setType('info');
+			$intensityStateCmd->setSubType('numeric');
+			$intensityStateCmd->setGeneric_type('DONT');
+			$intensityStateCmd->setIsVisible(0);
+			$intensityStateCmd->setOrder(12);
+			$intensityStateCmd->save();
+		} 
 		// Liens entre les commandes
 		$onCmd->setValue($stateCmd->getId());
 		$onCmd->save();
@@ -292,7 +352,10 @@ class wled extends eqLogic {
 		$colorCmd->save();
 		$effectCmd->setValue($effectStateCmd->getId());
 		$effectCmd->save();
-		
+		$speedCmd->setValue($speedStateCmd->getId());
+		$speedCmd->save();
+		$intensityCmd->setValue($intensityStateCmd->getId());
+		$intensityCmd->save();
 		$this->getWledEffects();
 	}
 
@@ -362,12 +425,13 @@ class wled extends eqLogic {
 		$segment = $result['seg'][0];
 		log::add('wled', 'debug', 'Traitement segment '. print_r($segment, true));
 		$this->checkAndUpdateCmd('effect_state', $segment['fx']);
+		$this->checkAndUpdateCmd('speed_state', $segment['sx']);
+		$this->checkAndUpdateCmd('intensity_state', $segment['ix']);
 		$mainColor = $segment['col'][0];
 		log::add('wled', 'debug', 'main color '. print_r($mainColor, true));
 		$value = '#' . sprintf('%02x', $mainColor[0]) . sprintf('%02x', $mainColor[1]) . sprintf('%02x', $mainColor[2]);
 		log::add('wled', 'debug', 'color value '. $value);
 		$this->checkAndUpdateCmd('color_state', $value);
-
 	}
 	public function updateEffects($result) {
 		log::add('wled', 'debug', 'updateEffects for '. print_r($result, true));
@@ -428,6 +492,10 @@ class wledCmd extends cmd {
 			$g = hexdec($g);
 			$b = hexdec($b);
 			$data = array('R' => $r, 'G' => $g, 'B' => $b);
+		} else if ($action == 'speed') {
+			$data = array('SX' => $_options['slider']);
+		}  else if ($action == 'intensity') {
+			$data = array('IX' => $_options['slider']);
 		}
 		$endPoint ='/win';
 		$ipAddress = $eqLogic->getConfiguration('ip_address');
