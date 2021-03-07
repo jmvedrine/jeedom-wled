@@ -12,8 +12,8 @@
 	"hasDependency" : false,
 	"hasOwnDeamon" : false,
 	"maxDependancyInstallTime" : 0,
-	"changelog" : "https://jmvedrine.github.io/plugin-wled/#language#/changelog",
-	"documentation" : "https://jmvedrine.github.io/plugin-wled/#language#/",
+	"changelog" : "https://jmvedrine.github.io/jeedom-wled/#language#/changelog",
+	"documentation" : "https://jmvedrine.github.io/jeedom-wled/#language#/",
 	"language" : ["fr_FR","en_US","de_DE","sp_SP"],
 	"compatibility" : ["miniplus","smart","rpi","docker","diy","mobile","v4"]
 }
