@@ -393,22 +393,26 @@ class wled extends eqLogic {
 		log::add('wled', 'debug', 'Running getWledStatus');
 		$endPoint ='/json/state';
 		$ipAddress = $this->getConfiguration('ip_address');
-		$result = wled::request($ipAddress, $endPoint, null, 'GET');
-		log::add('wled', 'debug', 'request result '. $result);
-		$result = is_json($result, $result);
-		if (is_array($result)) {
-			$this->applyState($result);
+		if ($ipAddress != '') {
+			$result = wled::request($ipAddress, $endPoint, null, 'GET');
+			log::add('wled', 'debug', 'request result '. $result);
+			$result = is_json($result, $result);
+			if (is_array($result)) {
+				$this->applyState($result);
+			}
 		}
 	}
 	public function getWledEffects() {
 		log::add('wled', 'debug', 'Running getWledEfects');
 		$endPoint ='/json/eff';
 		$ipAddress = $this->getConfiguration('ip_address');
-		$result = wled::request($ipAddress, $endPoint, null, 'GET');
-		log::add('wled', 'debug', 'request result '. $result);
-		$result = is_json($result, $result);
-		if (is_array($result)) {
-			$this->updateEffects($result);
+		if ($ipAddress != '') {
+			$result = wled::request($ipAddress, $endPoint, null, 'GET');
+			log::add('wled', 'debug', 'request result '. $result);
+			$result = is_json($result, $result);
+			if (is_array($result)) {
+				$this->updateEffects($result);
+			}
 		}
 	}
 	public function applyState($result) {
