@@ -8,11 +8,14 @@ Plugin permettant de contrôler des led adressables via le contrôleur WLED.
 Mais tout d'abord il faut préciser ce que sont les led adressables qu' on trouve sous forme 
 
 - de ruban,
+
 ![ruban](../images/ruban.png)
 - de "guirlande" (parfait pour un éclairage extérieur de Noël en mettant alimentation et contrôleur dans un coffret étanche)
+
 ![guirlande](../images/guirlande.png)
-- ou de matrice.
- 
+- ou de panneau (matrice)
+![panneau](../images/panneau.png)
+
 Ce sont des led où chaque led (ou plus rarement groupe de 2 ou 3 leds) possède son petit contrôleur qui permet de la commander individuellement.
 On peut donc faire de très jolis effets puisque le côntroleur va pouvoir commander l'allumage, la luminosité ou la couleur de chaque led.
 
