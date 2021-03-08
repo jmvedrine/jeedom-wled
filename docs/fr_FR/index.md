@@ -14,6 +14,7 @@ Mais tout d'abord il faut préciser ce que sont les led adressables qu' on trouv
 
 ![guirlande](../images/guirlande.png)
 - ou de panneau (matrice)
+
 ![panneau](../images/panneau.png)
 
 Ce sont des led où chaque led (ou plus rarement groupe de 2 ou 3 leds) possède son petit contrôleur qui permet de la commander individuellement.
