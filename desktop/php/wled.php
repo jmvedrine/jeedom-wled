@@ -14,6 +14,11 @@ $eqLogics = eqLogic::byType($plugin->getId());
 		<legend><i class="fas fa-cog"></i>  {{Gestion}}</legend>
 		<!-- Boutons de gestion du plugin -->
 		<div class="eqLogicThumbnailContainer">
+			<div class="cursor logoPrimary eqLogicAction" data-action="discover">
+				<i class="fas fa-bullseye"></i>
+				<br>
+				<span><center>{{Découverte}}</center></span>
+			</div>
 			<div class="cursor eqLogicAction logoPrimary" data-action="add">
 				<i class="fas fa-plus-circle"></i>
 				<br>

@@ -48,6 +48,10 @@ Rien de spécial il suffit juste d'installer le plugin comme n'importe quel plug
 Création des équipements
 ===
 
+Vous pouvez cliquer sur le bouton Découverte et le plugin scannera votre réseau local à la recherche des contrôleurs Wled. Pour chaque équipement il récupérera l'adresse IP et le nom. Il ne vous restera plus qu'à les placer dans la pièce de votre choix pour pouvoir les utiliser. Par défaut l'intervalle d'actualisation est initialisé à "toutes les minutes" mais vous pouvez le changer.
+
+Vous pouvez aussi créer un équipement manuellement en cliquant sur le bouton "+".
+
 Pour chaque équipement en plus des informations habituelles communes à tous les équipements dans les plugins Jeedom, vous devez préciser
 
 - l'adresse IP du contrôleur (en général sous la forme 192.168.x.x)
@@ -62,3 +66,19 @@ Commandes
 
 Pour le moment le nombre de commandes disponibles dans cette première version est faible. le plugin s'enrichira par la suite.
 
+| Nom                                  | Type    | Sous type  | Rôle                                                                                                                                                               |
+| :--:                                 | :---:   | :---:      | :---:                                                                                                                                                              |
+| **Allumer**                          | action  | autre      | Allume l'équipement.                                                                                                                                               |
+| **Eteindre**                         | action  | autre      | Eteint l'équipement.                                                                                                                                               |
+| **Etat**                             | info    | binaire    | Indique si l'équipement est allumé ou éteint.                                                                                                                      |
+| **Luminosité**                       | action  | curseur    | Règle la luminosité( min = 0, max =255).                                                                                                                           |
+| **Etat Luminosité**                  | info    | numerique  | Valeur de la luminosité entre 0 et 255.                                                                                                                            |
+| **Couleur**                          | action  | couleur    | Couleur principale (RVB pour le moment le plugin ne gère pas les leds RVBW)                                                                                        |
+| **Etat couleur**                     | info    | chaine     | Valeur hexadécimale de la couleur principale RVB.                                                                                                                  |
+| **Effet**                            | action  | liste      | Effet (la liste est récupérée sur le contrôleur et peu donc varier suivant la version de WLED)                                                                     |
+| **Etat effet**                       | info    | numerique  | Numéro de l'effet                                                                                                                                                  |
+| **Vitesse effet**                    | action  | curseur    | Vitesse de l'effet (min = 0 est le plus lent, max = 255 est le plus rapide)                                                                                        |
+| **Etat vitesse effet**               | info    | numerique  | Valeur de la vitesse de l'effet entre 0 et 255                                                                                                                     |
+| **Intensité effet**                  | action  | curseur    | Intensité de l'effet (le résultat est variable suivant l'effet pour certains effets cette commande ne fait rien)                                                   |
+| **Etat intensité effet**             | info    | numerique  | Valeur de l'intensité de l'effet                                                                                                                                   |
+| :--:                                 | :---:   | :---:      | :---:                                                                                                                                                              |

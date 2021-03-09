@@ -61,6 +61,66 @@ class wled extends eqLogic {
 		$result = $request_http->exec(60,1);
 		return $result;
 	}
+	
+	public static function discoverDevices() {
+		log::add('wled', 'debug', 'function discover');
+		if (!class_exists('mDNS')) {
+			require_once dirname(__FILE__) . '/../../3rdparty/mdns.php';
+		}
+		$mdns = new mDNS();
+		// Search for wled devices
+		$mdns->query("_http._tcp.local",1,12,"");
+		$cc = 15;
+		$wleds = array();
+		while ($cc>0) {
+			$inpacket = $mdns->readIncoming();
+			if ($inpacket->packetheader !=NULL){
+				$ans = $inpacket->packetheader->getAnswerRRs();
+				if ($ans> 0) {
+					$name = $inpacket->answerrrs[1]->name;
+					$pos = strpos($name, 'wled');
+					if ($pos !== false) {
+					   $localname = explode('.',$inpacket->answerrrs[1]->name);
+					   $ip = gethostbyname($localname[0].'.local');
+					   log::add('wled', 'debug', 'Discovered '.$inpacket->answerrrs[1]->name. ' at '.$ip);
+					   $eqLogics = self::byTypeAndSearhConfiguration(__CLASS__, '"ip_address":"'.$ip.'"');
+					   if (empty($eqLogics)) {
+							log::add('wled', 'debug', 'Nouvel équipement '.$ip);
+							event::add('jeedom::alert', array(
+								'level' => 'warning',
+								'page' => 'wled',
+								'message' => __('Nouvel équipement detecté', __FILE__),
+							));
+							$eqLogic = new wled();
+							
+							$eqLogic->setEqType_name('wled');
+							$eqLogic->setIsEnable(1);
+							$eqLogic->setIsVisible(1);
+							$eqLogic->setConfiguration('ip_address', $ip);
+							$eqLogic->setConfiguration('autorefresh', '* * * * *');
+							// We must request the friendly name.
+							$result = wled::request($ip, '/json/infos', null, 'GET');
+							log::add('wled', 'debug', 'request result '. $result);
+							$result = is_json($result, $result);
+							 if(isset($result['name'])){
+								$eqLogic->setName($result['name']);
+							} else {
+								$eqLogic->setName($localname[0].'.local');
+							}
+							$eqLogic->save();
+							$eqLogic->getWledInfos();
+					   } else {
+							log::add('wled', 'debug', 'Déjà existant '.$ip);
+					   }
+					   $cc=15;
+				   }
+					$cc--;
+				}
+			}
+		}
+        log::add('wled', 'debug', 'end function discover');
+	}
+	
 	/*
 	 * Fonction exécutée automatiquement toutes les minutes par Jeedom
 	 */
@@ -128,7 +188,7 @@ class wled extends eqLogic {
 	
  // Fonction exécutée automatiquement avant la création de l'équipement 
 	public function preInsert() {
-		
+		$this->setCategory('light', 1);
 	}
 
  // Fonction exécutée automatiquement après la création de l'équipement 
@@ -415,6 +475,17 @@ class wled extends eqLogic {
 			}
 		}
 	}
+	
+	public function getWledInfos() {
+		log::add('wled', 'debug', 'Running getWledInfos');
+		$endPoint ='/json/infos';
+		$ipAddress = $this->getConfiguration('ip_address');
+		if ($ipAddress != '') {
+			$result = wled::request($ipAddress, $endPoint, null, 'GET');
+			log::add('wled', 'debug', 'request result '. $result);
+			$result = is_json($result, $result);
+		}
+	}
 	public function applyState($result) {
 		log::add('wled', 'debug', 'applyState for '. print_r($result, true));
 		$info = $result['on'];
@@ -451,6 +522,7 @@ class wled extends eqLogic {
 			$effectCmd->save();
 		}
 	}
+	
 }
 
 class wledCmd extends cmd {
