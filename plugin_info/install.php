@@ -25,12 +25,22 @@ require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 
 // Fonction exécutée automatiquement après la mise à jour du plugin
   function wled_update() {
-
+	    // normalizeName ne marche pas sur Allumer et Eteindre ce qui crée un bug sur le widget.
+      	foreach (eqLogic::byType('wled') as $eqLogic) {
+			$cmd = $eqLogic->getCmd(null, 'on');
+			if (is_object($cmd)) {
+				$cmd->setName('On');
+				$cmd->save();
+			}
+		    $cmd = $eqLogic->getCmd(null, 'off');
+			if (is_object($cmd)) {
+				$cmd->setName('Off');
+				$cmd->save();
+			}
+		}
   }
 
 // Fonction exécutée automatiquement après la suppression du plugin
   function wled_remove() {
 
   }
-
-?>

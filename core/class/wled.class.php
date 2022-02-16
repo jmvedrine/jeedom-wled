@@ -217,7 +217,7 @@ class wled extends eqLogic {
 		$onCmd = $this->getCmd(null, "on");
 		if (!is_object($onCmd)) {
 			$onCmd = new wledCmd();
-			$onCmd->setName(__('Allumer', __FILE__));
+			$onCmd->setName('On');
 			$onCmd->setEqLogic_id($this->getId());
 			$onCmd->setLogicalId('on');
 			$onCmd->setType('action');
@@ -235,7 +235,7 @@ class wled extends eqLogic {
 		$offCmd = $this->getCmd(null, "off");
 		if (!is_object($offCmd)) {
 			$offCmd = new wledCmd();
-			$offCmd->setName(__('Eteindre', __FILE__));
+			$offCmd->setName('Off');
 			$offCmd->setEqLogic_id($this->getId());
 			$offCmd->setLogicalId('off');
 			$offCmd->setType('action');

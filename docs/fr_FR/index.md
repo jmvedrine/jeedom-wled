@@ -24,7 +24,7 @@ Si j’ai correctement lu la doc des différents plugins Jeedom que j’ai trouv
 
 Mais ce qui m'a spécialement intéressé c'est qu'il existe un fantastique contrôleur Wifi nommé WLED qu'on peut implanter sur un ESP8266 ou ESP32 (par exemple un Wemos ou un NodeMCU) qui permet de commander ces leds.
 
-Vous pouvez consulter [le dépot Github de WED](https://www.google.com) et [son wiki](https://github.com/Aircoookie/WLED/wiki)
+Vous pouvez consulter [le dépot Github de WED](https://github.com/Aircoookie/WLED) et [son wiki](https://github.com/Aircoookie/WLED/wiki)
 
 Sachant que ce contrôleur possède une API très riche qui permet de communiquer avec lui par des requêtes JSON ou HTTP, j'ai décidé de faire un plugin pour interfacer ce contrôleur avec Jeedom
 
@@ -71,11 +71,11 @@ Pour le moment le nombre de commandes disponibles dans cette première version e
 | Nom                                  | Type    | Sous type  | Rôle                                                                                                                                                               |
 | :--:                                 | :---:   | :---:      | :---:                                                                                                                                                              |
 | **Allumer**                          | action  | autre      | Allume l'équipement.                                                                                                                                               |
-| **Eteindre**                         | action  | autre      | Eteint l'équipement.                                                                                                                                               |
+| **Eteindre**                         | action  | autre      | Éteint l'équipement.                                                                                                                                               |
 | **Etat**                             | info    | binaire    | Indique si l'équipement est allumé ou éteint.                                                                                                                      |
 | **Luminosité**                       | action  | curseur    | Règle la luminosité( min = 0, max =255).                                                                                                                           |
 | **Etat Luminosité**                  | info    | numerique  | Valeur de la luminosité entre 0 et 255.                                                                                                                            |
-| **Couleur**                          | action  | couleur    | Couleur principale (RVB pour le moment le plugin ne gère pas les leds RVBW)                                                                                        |
+| **Couleur**                          | action  | couleur    | Couleur principale (RVB, pour le moment le plugin ne gère pas les leds RVBW)                                                                                        |
 | **Etat couleur**                     | info    | chaine     | Valeur hexadécimale de la couleur principale RVB.                                                                                                                  |
 | **Effet**                            | action  | liste      | Effet (la liste est récupérée sur le contrôleur et peu donc varier suivant la version de WLED)                                                                     |
 | **Etat effet**                       | info    | numerique  | Numéro de l'effet                                                                                                                                                  |
@@ -83,4 +83,3 @@ Pour le moment le nombre de commandes disponibles dans cette première version e
 | **Etat vitesse effet**               | info    | numerique  | Valeur de la vitesse de l'effet entre 0 et 255                                                                                                                     |
 | **Intensité effet**                  | action  | curseur    | Intensité de l'effet (le résultat est variable suivant l'effet pour certains effets cette commande ne fait rien)                                                   |
 | **Etat intensité effet**             | info    | numerique  | Valeur de l'intensité de l'effet                                                                                                                                   |
-| :--:                                 | :---:   | :---:      | :---:                                                                                                                                                              |

@@ -22,5 +22,3 @@ require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
   function wled_pre_update() {
 
   }
-  
-?>
