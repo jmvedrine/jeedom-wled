@@ -70,8 +70,8 @@ Pour le moment le nombre de commandes disponibles dans cette première version e
 
 | Nom                                  | Type    | Sous type  | Rôle                                                                                                                                                               |
 | :--:                                 | :---:   | :---:      | :---:                                                                                                                                                              |
-| **Allumer**                          | action  | autre      | Allume l'équipement.                                                                                                                                               |
-| **Eteindre**                         | action  | autre      | Éteint l'équipement.                                                                                                                                               |
+| **On**                               | action  | autre      | Allume l'équipement.                                                                                                                                               |
+| **Off**                              | action  | autre      | Éteint l'équipement.                                                                                                                                               |
 | **Etat**                             | info    | binaire    | Indique si l'équipement est allumé ou éteint.                                                                                                                      |
 | **Luminosité**                       | action  | curseur    | Règle la luminosité( min = 0, max =255).                                                                                                                           |
 | **Etat Luminosité**                  | info    | numerique  | Valeur de la luminosité entre 0 et 255.                                                                                                                            |
