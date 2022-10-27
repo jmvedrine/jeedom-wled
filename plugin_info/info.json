@@ -14,6 +14,8 @@
 	"maxDependancyInstallTime" : 0,
 	"changelog" : "https://jmvedrine.github.io/jeedom-wled/#language#/changelog",
 	"documentation" : "https://jmvedrine.github.io/jeedom-wled/#language#/",
+	"changelog_beta" : "https://jmvedrine.github.io/jeedom-wled/#language#/changelog",
+	"documentation_beta" : "https://jmvedrine.github.io/jeedom-wled/#language#/",
 	"language" : ["fr_FR","en_US","de_DE","sp_SP"],
-	"compatibility" : ["miniplus","smart","rpi","docker","diy","mobile","v4"]
+	"compatibility" : ["miniplus","smart","atlas","rpi","docker","diy","mobile","v4"]
 }
