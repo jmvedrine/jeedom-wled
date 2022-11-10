@@ -345,6 +345,18 @@ class wled extends eqLogic {
 			$effectStateCmd->setOrder(8);
 			$effectStateCmd->save();
 		}
+		$effectNameCmd = $this->getCmd(null, "effect_name");
+		if (!is_object($effectNameCmd)) {
+			$effectNameCmd = new wledCmd();
+			$effectNameCmd->setName(__('Nom effet', __FILE__));
+			$effectNameCmd->setEqLogic_id($this->getId());
+			$effectNameCmd->setLogicalId('effect_name');
+			$effectNameCmd->setType('info');
+			$effectNameCmd->setSubType('string');
+			$effectNameCmd->setIsVisible(1);
+			$effectNameCmd->setOrder(13);
+			$effectNameCmd->save();
+		}
 		$speedCmd = $this->getCmd(null, "speed");
 		if (!is_object($speedCmd)) {
 			$speedCmd = new wledCmd();
@@ -499,7 +511,18 @@ class wled extends eqLogic {
 		// On prend le premier segment
 		$segment = $result['seg'][0];
 		log::add('wled', 'debug', 'Traitement segment '. print_r($segment, true));
-		$this->checkAndUpdateCmd('effect_state', $segment['fx']);
+		$effectNumber = $segment['fx'];
+		$this->checkAndUpdateCmd('effect_state', $effectNumber);
+		$effectCmd = $this->getCmd(null, "effect");
+		if (is_object($effectCmd)) {
+			$elements = explode(';', $effectCmd->getConfiguration('listValue', ''));
+			foreach ($elements as $element) {
+				$coupleArray = explode('|', $element);
+				if ($effectNumber == $coupleArray[0]) {
+					$this->checkAndUpdateCmd('effect_name', $coupleArray[1]);
+				}
+			}
+		}		
 		$this->checkAndUpdateCmd('speed_state', $segment['sx']);
 		$this->checkAndUpdateCmd('intensity_state', $segment['ix']);
 		$mainColor = $segment['col'][0];

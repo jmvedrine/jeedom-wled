@@ -37,6 +37,17 @@ require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 				$cmd->setName('Off');
 				$cmd->save();
 			}
+			$cmd = $eqLogic->getCmd(null, 'effect_name');
+			if ( ! is_object($cmd) ) {
+				$cmd->setName(__('Nom effet', __FILE__));
+				$cmd->setEqLogic_id($eqLogic->getId());
+				$cmd->setLogicalId('effect_name');
+				$cmd->setType('info');
+				$cmd->setSubType('string');
+				$cmd->setIsVisible(1);
+				$cmd->setOrder(13);
+				$cmd->save();
+			}
 		}
   }
 

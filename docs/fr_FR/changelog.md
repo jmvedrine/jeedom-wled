@@ -15,3 +15,7 @@ Correction d'un problème dans le widget a cause du nom des commandes Allumer/Et
 # 19/10/2022
 
 Compatibilité avec Jeedom 4.3 de l'onglet Commandes (affichage de l'état des commandes info).
+
+# 10/11/2022
+
+Nouvelle commande info de type chaîne donnant le nom de l'effet sélectionné (la commande Etat effet ne retournant que son numéro, cela peut être utile de récupérer son nom)
