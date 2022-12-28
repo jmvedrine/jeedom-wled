@@ -197,7 +197,9 @@ class wled extends eqLogic {
 
  // Fonction exécutée automatiquement avant la mise à jour de l'équipement 
 	public function preUpdate() {
-		
+		if ($this->getConfiguration('ip_address') == '') {
+			throw new Exception(__('L\'adresse IP du WLED ne peut être vide', __FILE__));
+		}	
 	}
 
  // Fonction exécutée automatiquement après la mise à jour de l'équipement 
