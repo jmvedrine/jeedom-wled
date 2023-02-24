@@ -19,3 +19,8 @@ Compatibilité avec Jeedom 4.3 de l'onglet Commandes (affichage de l'état des c
 # 10/11/2022
 
 Nouvelle commande info de type chaîne donnant le nom de l'effet sélectionné (la commande Etat effet ne retournant que son numéro, cela peut être utile de récupérer son nom)
+
+# 24/02/2023
+
+Le plugin ne fonctionne pas avec Jeedom 3.x donc il nécessite maintenant Jeedom 4.2.
+Les effets avec les noms 'RSVD' ou "-" ne sont pas valable (varie suivant le matériel) donc il sont maintenant retirés de la liste.

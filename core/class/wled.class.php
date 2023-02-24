@@ -63,7 +63,7 @@ class wled extends eqLogic {
 	}
 	
 	public static function discoverDevices() {
-		log::add('wled', 'debug', 'function discover');
+		log::add('wled', 'debug', 'Function discoverDevices');
 		if (!class_exists('mDNS')) {
 			require_once dirname(__FILE__) . '/../../3rdparty/mdns.php';
 		}
@@ -115,10 +115,14 @@ class wled extends eqLogic {
 					   $cc=15;
 				   }
 					$cc--;
+				} else {
+					log::add('wled', 'debug', 'No answers');
 				}
+			} else {
+				log::add('wled', 'debug', 'Nothing discovered');
 			}
 		}
-        log::add('wled', 'debug', 'end function discover');
+        log::add('wled', 'debug', 'End function discoverDevices');
 	}
 	
 	/*
@@ -487,6 +491,8 @@ class wled extends eqLogic {
 			if (is_array($result)) {
 				$this->updateEffects($result);
 			}
+		} else {
+			log::add('wled', 'debug', 'Error : getWledEfects called with empty ip address');
 		}
 	}
 	
@@ -498,6 +504,8 @@ class wled extends eqLogic {
 			$result = wled::request($ipAddress, $endPoint, null, 'GET');
 			log::add('wled', 'debug', 'request result '. $result);
 			$result = is_json($result, $result);
+		} else {
+			log::add('wled', 'debug', 'Error : getWledInfos called with empty ip address');
 		}
 	}
 	public function applyState($result) {
@@ -537,7 +545,9 @@ class wled extends eqLogic {
 		log::add('wled', 'debug', 'updateEffects for '. print_r($result, true));
 		$effects = array();
 		foreach ($result as $k => $name) {
-            $effects[] = $k . '|' . $name;
+			if ($name != 'RSVD' && $name != "-") {
+				$effects[] = $k . '|' . $name;
+			}
         }
 		$listEffects = implode(';', $effects);
 		log::add('wled', 'debug', 'listEffects '.$listEffects);
