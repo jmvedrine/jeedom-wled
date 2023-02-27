@@ -54,8 +54,8 @@ Création des équipements
 
 Vous pouvez cliquer sur le bouton Découverte et le plugin scannera votre réseau local à la recherche des contrôleurs Wled. Pour chaque équipement il récupérera l'adresse IP et le nom. Il ne vous restera plus qu'à les placer dans la pièce de votre choix pour pouvoir les utiliser. Par défaut l'intervalle d'actualisation est initialisé à "toutes les minutes" mais vous pouvez le changer.
 
-Si dans l'appli smartphone (ou dans l'interface web) vous avez défini plusieurs segments, un objet Jeedom sera créé pour le segment 0 appelé segment principal (qui comprends toutes les leds et un objet pour chaque segment.
-Pour le segment 0, les commandes on, off et luminosité agissent sur toutes les leds (et la commande off réinitialise les effets poour tous les segments) alors que pour les autres segments ces commandes agissent seulemnt sur les leds du segment.
+Si dans l'appli smartphone (ou dans l'interface web) vous avez défini plusieurs segments, un objet Jeedom sera créé pour le segment 0 appelé segment principal (qui comprends toutes les leds) et un objet pour chaque segment.
+Pour le segment principal (segment 0), les commandes on, off et luminosité agissent sur toutes les leds branchées sur le contrôleur situé à cette IP (et la commande off réinitialise les effets pour tous les segments) alors que pour les autres segments ces commandes agissent seulemnt sur les leds du segment.
 
 
 ## Création manuelle des équipements

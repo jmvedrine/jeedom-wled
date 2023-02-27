@@ -122,6 +122,12 @@ class wled extends eqLogic {
 								$eqLogic->setConfiguration('ip_address', $ip);
 								$eqLogic->setConfiguration('segment', $numseg);
 								$eqLogic->setConfiguration('autorefresh', '* * * * *');
+								$eqLogic->setConfiguration('version', $infos['ver']);
+								$eqLogic->setConfiguration('ledscount', $infos['leds']['count']);
+								$eqLogic->setConfiguration('segledscount', $segment['stop'] - $segment['start']);
+								$eqLogic->setConfiguration('ledsmaxpwr', $infos['leds']['maxpwr']);
+								$eqLogic->setConfiguration('ledsfxcount', $infos['fxcount']);
+								$eqLogic->setConfiguration('ledspalcount', $infos['palcount']);
 								$eqLogic->save();
 							} else {
 								log::add('wled', 'debug', 'Déjà existant '.$ip. '_seg' .$numseg);

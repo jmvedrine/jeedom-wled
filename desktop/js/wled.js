@@ -24,6 +24,30 @@ $("#table_cmd").sortable({
   forcePlaceholderSize: true
 })
 
+function printEqLogicHelper(label,name,_eqLogic){
+	var trm = '<tr><td class="col-sm-4"><span style="font-size : 1em;">'+label+'</span></td><td><span class="label label-default" style="font-size : 1em;"> <span class="eqLogicAttr" data-l1key="configuration" data-l2key="'+name+'"></span></span></td></tr>';
+	
+	$('#table_infoseqlogic tbody').append(trm);
+	$('#table_infoseqlogic tbody tr:last').setValues(_eqLogic, '.eqLogicAttr');
+}
+
+// fonction executée par jeedom lors de l'affichage des details d'un eqlogic
+function printEqLogic(_eqLogic) {
+	if (!isset(_eqLogic)) {
+		var _eqLogic = {configuration: {}};
+	}
+	if (!isset(_eqLogic.configuration)) {
+		_eqLogic.configuration = {};
+	}
+	$('#table_infoseqlogic tbody').empty();
+    printEqLogicHelper("{{Version WLED}}","version",_eqLogic);
+	printEqLogicHelper("{{Nombre total de leds}}","ledscount",_eqLogic);
+	printEqLogicHelper("{{Nombre de leds du segment}}","segledscount",_eqLogic);
+	printEqLogicHelper("{{Puissance maximum (mA)}}","ledsmaxpwr",_eqLogic);
+	printEqLogicHelper("{{Nombre d'effets}}","ledsfxcount",_eqLogic);
+	printEqLogicHelper("{{Nombre de palettes}}","ledspalcount",_eqLogic);  
+}
+
 /* Fonction permettant l'affichage des commandes dans l'équipement */
 function addCmdToTable(_cmd) {
   if (!isset(_cmd)) {

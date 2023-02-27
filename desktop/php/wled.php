@@ -164,6 +164,12 @@ $eqLogics = eqLogic::byType($plugin->getId());
 						<!-- Affiche un champ de commentaire par défaut mais vous pouvez y mettre ce que vous voulez -->
 						<div class="col-lg-6">
 							<legend><i class="fas fa-info"></i> {{Informations}}</legend>
+							<table id="table_infoseqlogic" class="table table-condensed" style="border-radius: 10px;">
+								<thead>
+								</thead>
+								<tbody>
+								</tbody>
+                            </table>
 							<div class="form-group">
 								<div class="text-center">
 									<img name="icon_visu" src="<?= $plugin->getPathImgIcon(); ?>" style="max-width:160px;"/>
