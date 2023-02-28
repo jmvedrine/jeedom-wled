@@ -431,7 +431,45 @@ class wled extends eqLogic {
             $intensityStateCmd->setIsVisible(0);
             $intensityStateCmd->setOrder(12);
             $intensityStateCmd->save();
-        } 
+        }
+        $paletteCmd = $this->getCmd(null, "palette");
+        if (!is_object($paletteCmd)) {
+            $paletteCmd = new wledCmd();
+            $paletteCmd->setName(__('Palette', __FILE__));
+            $paletteCmd->setEqLogic_id($this->getId());
+            $paletteCmd->setLogicalId('palette');
+            $paletteCmd->setType('action');
+            $paletteCmd->setSubType('select');
+            // The listValue will be updated later.
+            $paletteCmd->setGeneric_type('LIGHT_MODE');
+            $paletteCmd->setIsVisible(1);
+            $paletteCmd->setOrder(14);
+            $paletteCmd->save();
+        }
+        $paletteStateCmd = $this->getCmd(null, "palette_state");
+        if (!is_object($paletteStateCmd)) {
+            $paletteStateCmd = new wledCmd();
+            $paletteStateCmd->setName(__('Etat palette', __FILE__));
+            $paletteStateCmd->setEqLogic_id($this->getId());
+            $paletteStateCmd->setLogicalId('palette_state');
+            $paletteStateCmd->setType('info');
+            $paletteStateCmd->setSubType('numeric');
+            $paletteStateCmd->setIsVisible(0);
+            $paletteStateCmd->setOrder(15);
+            $paletteStateCmd->save();
+        }
+        $paletteNameCmd = $this->getCmd(null, "palette_name");
+        if (!is_object($paletteNameCmd)) {
+            $paletteNameCmd = new wledCmd();
+            $paletteNameCmd->setName(__('Nom palette', __FILE__));
+            $paletteNameCmd->setEqLogic_id($this->getId());
+            $paletteNameCmd->setLogicalId('palette_name');
+            $paletteNameCmd->setType('info');
+            $paletteNameCmd->setSubType('string');
+            $paletteNameCmd->setIsVisible(0);
+            $paletteNameCmd->setOrder(16);
+            $paletteNameCmd->save();
+        }
         // Liens entre les commandes
         $onCmd->setValue($stateCmd->getId());
         $onCmd->save();
@@ -447,7 +485,10 @@ class wled extends eqLogic {
         $speedCmd->save();
         $intensityCmd->setValue($intensityStateCmd->getId());
         $intensityCmd->save();
+        $paletteCmd->setValue($paletteStateCmd->getId());
+        $paletteCmd->save();
         $this->getWledEffects();
+        $this->getWledPalettes();
     }
 
  // Fonction exécutée automatiquement avant la suppression de l'équipement 
@@ -500,10 +541,26 @@ class wled extends eqLogic {
         $ipAddress = $this->getConfiguration('ip_address');
         if ($ipAddress != '') {
             $result = wled::request($ipAddress, $endPoint, null, 'GET');
-            log::add('wled', 'debug', 'request result '. $result);
+            log::add('wled', 'debug', 'getWledEfects request result '. $result);
             $result = is_json($result, $result);
             if (is_array($result)) {
                 $this->updateEffects($result);
+            }
+        } else {
+            log::add('wled', 'debug', 'Error : getWledEfects called with empty ip address');
+        }
+    }
+
+    public function getWledPalettes() {
+        log::add('wled', 'debug', 'Running getWledPalettes');
+        $endPoint ='/json/pal';
+        $ipAddress = $this->getConfiguration('ip_address');
+        if ($ipAddress != '') {
+            $result = wled::request($ipAddress, $endPoint, null, 'GET');
+            log::add('wled', 'debug', 'getWledPalettes request result '. $result);
+            $result = is_json($result, $result);
+            if (is_array($result)) {
+                $this->updatePalettes($result);
             }
         } else {
             log::add('wled', 'debug', 'Error : getWledEfects called with empty ip address');
@@ -551,7 +608,19 @@ class wled extends eqLogic {
                     $this->checkAndUpdateCmd('effect_name', $coupleArray[1]);
                 }
             }
-        }       
+        }
+        $paletteNumber = $segment['pal'];
+        $this->checkAndUpdateCmd('palette_state', $paletteNumber);
+        $paletteCmd = $this->getCmd(null, "palette");
+        if (is_object($paletteCmd)) {
+            $elements = explode(';', $paletteCmd->getConfiguration('listValue', ''));
+            foreach ($elements as $element) {
+                $coupleArray = explode('|', $element);
+                if ($paletteNumber == $coupleArray[0]) {
+                    $this->checkAndUpdateCmd('palette_name', $coupleArray[1]);
+                }
+            }
+        }           
         $this->checkAndUpdateCmd('speed_state', $segment['sx']);
         $this->checkAndUpdateCmd('intensity_state', $segment['ix']);
         $mainColor = $segment['col'][0];
@@ -575,6 +644,23 @@ class wled extends eqLogic {
         if (is_object($effectCmd)) {
             $effectCmd->setConfiguration('listValue',$listEffects);
             $effectCmd->save();
+        }
+    }
+
+    public function updatePalettes($result) {
+        log::add('wled', 'debug', 'updatePalettes for '. print_r($result, true));
+        $palettes = array();
+        foreach ($result as $k => $name) {
+            if ($name != 'RSVD' && $name != "-") {
+                $palettes[] = $k . '|' . $name;
+            }
+        }
+        $listPalettes = implode(';', $palettes);
+        log::add('wled', 'debug', 'listPalettes '.$listPalettes);
+        $paletteCmd = $this->getCmd(null, "palette");
+        if (is_object($paletteCmd)) {
+            $paletteCmd->setConfiguration('listValue',$listPalettes);
+            $paletteCmd->save();
         }
     }
 
@@ -639,6 +725,8 @@ class wledCmd extends cmd {
             }
         } else if ($action == 'effect') {
             $data = '{"seg":[{"id":' . $segment . ', "fx":' . intval($_options['select']) . '}]}';
+        } else if ($action == 'palette') {
+            $data = '{"seg":[{"id":' . $segment . ', "pal":' . intval($_options['select']) . '}]}';
         } else if ($action == 'color') {
             list($r, $g, $b) = str_split(str_replace('#', '', $_options['color']), 2);
             $r= hexdec($r);
