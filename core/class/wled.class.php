@@ -83,56 +83,52 @@ class wled extends eqLogic {
                         $localname = explode('.',$inpacket->answerrrs[1]->name);
                         $ip = gethostbyname($localname[0].'.local');
                         log::add('wled', 'debug', 'Discovered '.$inpacket->answerrrs[1]->name. ' at '.$ip);
-					    // Friendly name.
+                        // Friendly name.
                         $infos = wled::request($ip, '/json/infos', null, 'GET');
                         log::add('wled', 'debug', 'request infos result '. $infos);
-						$infos = is_json($infos, $infos);
-						if(isset($infos['name'])){
-							$friendlyName= $infos['name'];
-						} else {
-							$friendlyName= $localname[0].'.local';
-						}
-						log::add('wled', 'debug', 'friendlyName : ' . $friendlyName);
+                        $infos = is_json($infos, $infos);
+                        if(isset($infos['name'])){
+                            $friendlyName= $infos['name'];
+                        } else {
+                            $friendlyName= $localname[0].'.local';
+                        }
+                        log::add('wled', 'debug', 'friendlyName : ' . $friendlyName);
                         $state = self::request($ip, '/json/state', null, 'GET');
                         log::add('wled', 'debug', 'state : ' . $state);
-						$state = is_json($state, $state);
-						$segments = $state['seg'];
-						foreach ($segments as $segment) {
-							log::add('wled', 'debug', 'Segment détecté '. $segment['id']);
-							$numseg = $segment['id'];
-							$eqLogics = self::byLogicalId($ip . '_seg' .$numseg, 'wled');
-							if (empty($eqLogics)) {
-								log::add('wled', 'debug', 'Nouvel équipement '.$ip . '_seg' .$numseg);
-								event::add('jeedom::alert', array(
-									'level' => 'warning',
-									'page' => 'wled',
-									'message' => __('Nouvel équipement detecté', __FILE__),
-								));
-								$eqLogic = new wled();
-								$eqLogic->setEqType_name('wled');
-								$eqLogic->setLogicalId($ip . '_seg' .$numseg);
-								$eqLogic->setIsEnable(1);
-								if ($numseg == 0) {
-									$eqLogic->setName($friendlyName);
-								} else {
-									$eqLogic->setName($friendlyName . ' segment ' . $numseg);
-								}
-								log::add('wled', 'debug', 'Nom équipement '. $eqLogic->getName());
-								$eqLogic->setIsVisible(1);
-								$eqLogic->setConfiguration('ip_address', $ip);
-								$eqLogic->setConfiguration('segment', $numseg);
-								$eqLogic->setConfiguration('autorefresh', '* * * * *');
-								$eqLogic->setConfiguration('version', $infos['ver']);
-								$eqLogic->setConfiguration('ledscount', $infos['leds']['count']);
-								$eqLogic->setConfiguration('segledscount', $segment['stop'] - $segment['start']);
-								$eqLogic->setConfiguration('ledsmaxpwr', $infos['leds']['maxpwr']);
-								$eqLogic->setConfiguration('ledsfxcount', $infos['fxcount']);
-								$eqLogic->setConfiguration('ledspalcount', $infos['palcount']);
-								$eqLogic->save();
-							} else {
-								log::add('wled', 'debug', 'Déjà existant '.$ip. '_seg' .$numseg);
-							}
-						}
+                        $state = is_json($state, $state);
+                        $segments = $state['seg'];
+                        foreach ($segments as $segment) {
+                            log::add('wled', 'debug', 'Segment détecté '. $segment['id']);
+                            $numseg = $segment['id'];
+                            $eqLogics = self::byLogicalId($ip . '_seg' .$numseg, 'wled');
+                            if (empty($eqLogics)) {
+                                log::add('wled', 'debug', 'Nouvel équipement '.$ip . '_seg' .$numseg);
+                                event::add('jeedom::alert', array(
+                                    'level' => 'warning',
+                                    'page' => 'wled',
+                                    'message' => __('Nouvel équipement detecté', __FILE__),
+                                ));
+                                $eqLogic = new wled();
+                                $eqLogic->setEqType_name('wled');
+                                $eqLogic->setLogicalId($ip . '_seg' .$numseg);
+                                $eqLogic->setIsEnable(1);
+                                if ($numseg == 0) {
+                                    $eqLogic->setName($friendlyName);
+                                } else {
+                                    $eqLogic->setName($friendlyName . ' segment ' . $numseg);
+                                }
+                                log::add('wled', 'debug', 'Nom équipement '. $eqLogic->getName());
+                                $eqLogic->setIsVisible(1);
+                                $eqLogic->setConfiguration('ip_address', $ip);
+                                $eqLogic->setConfiguration('segment', $numseg);
+                                $eqLogic->setConfiguration('autorefresh', '* * * * *');
+                                $eqLogic->updateInfos($infos);
+                                $eqLogic->setConfiguration('segledscount', $segment['stop'] - $segment['start']);
+                                $eqLogic->save();
+                            } else {
+                                log::add('wled', 'debug', 'Déjà existant '.$ip. '_seg' .$numseg);
+                            }
+                        }
                         $cc=15;
                     }
                     $cc--;
@@ -376,7 +372,7 @@ class wled extends eqLogic {
             $effectNameCmd->setLogicalId('effect_name');
             $effectNameCmd->setType('info');
             $effectNameCmd->setSubType('string');
-            $effectNameCmd->setIsVisible(1);
+            $effectNameCmd->setIsVisible(0);
             $effectNameCmd->setOrder(13);
             $effectNameCmd->save();
         }
@@ -522,6 +518,9 @@ class wled extends eqLogic {
             $result = wled::request($ipAddress, $endPoint, null, 'GET');
             log::add('wled', 'debug', 'getWledInfos request result '. $result);
             $result = is_json($result, $result);
+            if (is_array($result)) {
+                $this->updateInfos($result);
+            }
         } else {
             log::add('wled', 'debug', 'Error : getWledInfos called with empty ip address');
         }
@@ -538,7 +537,7 @@ class wled extends eqLogic {
         $info = $result['bri'];
         $this->checkAndUpdateCmd('brightness_state', $info);
         $numseg = $this->getConfiguration('segment', 0);
-		// A revoir utiliser segment "id"
+        // A revoir utiliser segment "id"
         $segment = $result['seg'][$numseg];
         log::add('wled', 'debug', 'Traitement segment '. print_r($segment, true));
         $effectNumber = $segment['fx'];
@@ -578,6 +577,16 @@ class wled extends eqLogic {
             $effectCmd->save();
         }
     }
+
+    public function updateInfos($result) {
+        log::add('wled', 'debug', 'updateInfos for '. print_r($result, true));
+        $this->setConfiguration('version', $result['ver']);
+        $this->setConfiguration('ledscount', $result['leds']['count']);
+        $this->setConfiguration('ledsmaxpwr', $result['leds']['maxpwr']);
+        $this->setConfiguration('ledsfxcount', $result['fxcount']);
+        $this->setConfiguration('ledspalcount', $result['palcount']);
+        $this->save();        
+    }
 }
 
 class wledCmd extends cmd {
@@ -611,23 +620,23 @@ class wledCmd extends cmd {
         log::add('wled', 'debug', 'execute action '. $action);
         log::add('wled', 'debug', 'execute options '. print_r($_options, true));
         if ($action == 'on') {
-			if ($segment == 0) {
-				$data = '{"on":true}';
-			} else {
-				$data = '{"seg":[{"id":' . $segment . ', "on":true}]}';
-			}
+            if ($segment == 0) {
+                $data = '{"on":true}';
+            } else {
+                $data = '{"seg":[{"id":' . $segment . ', "on":true}]}';
+            }
         } else if ($action == 'off') {
             if ($segment == 0) {
-				$data = '{"on":false}';
-			} else {
-				$data = '{"seg":[{"id":' . $segment . ', "on":false}]}';
-			}
+                $data = '{"on":false}';
+            } else {
+                $data = '{"seg":[{"id":' . $segment . ', "on":false}]}';
+            }
         } else if ($action == 'brightness') {
-			if ($segment == 0) {
-				$data = '{"bri":' . intval($_options['slider']) . '}';
-			} else {
-				$data = '{"seg":[{"id":' . $segment . ', "bri":' . intval($_options['slider']) . '}]}';
-			}
+            if ($segment == 0) {
+                $data = '{"bri":' . intval($_options['slider']) . '}';
+            } else {
+                $data = '{"seg":[{"id":' . $segment . ', "bri":' . intval($_options['slider']) . '}]}';
+            }
         } else if ($action == 'effect') {
             $data = '{"seg":[{"id":' . $segment . ', "fx":' . intval($_options['select']) . '}]}';
         } else if ($action == 'color') {
