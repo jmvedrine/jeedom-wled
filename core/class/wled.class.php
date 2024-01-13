@@ -47,7 +47,7 @@ class wled extends eqLogic {
             log::add('wled','debug','non GET request with url : '.$url);
             $request_http = new com_http($url);
             $request_http->setHeader(array(
-              'Content-Type: application/json'
+              'Content-Type: application/json', 'Content-Length: '.strlen($_payload)
             ));
             log::add('wled','debug','Non GET request payload : '.$_payload);
             if($_payload !== ""){
@@ -96,6 +96,8 @@ class wled extends eqLogic {
                         $state = self::request($ip, '/json/state', null, 'GET');
                         log::add('wled', 'debug', 'state : ' . $state);
                         $state = is_json($state, $state);
+                        $mainSegment = $state['mainseg'];
+                        log::add('wled', 'debug', 'Segment principal '. $mainSegment);
                         $segments = $state['seg'];
                         foreach ($segments as $segment) {
                             log::add('wled', 'debug', 'Segment détecté '. $segment['id']);
@@ -305,7 +307,7 @@ class wled extends eqLogic {
             $brightnessStateCmd->setLogicalId('brightness_state');
             $brightnessStateCmd->setType('info');
             $brightnessStateCmd->setSubType('numeric');
-            $brightnessStateCmd->setGeneric_type('LIGHT_STATE');
+            $brightnessStateCmd->setGeneric_type('LIGHT_BRIGHTNESS');
             $brightnessStateCmd->setIsVisible(0);
             $brightnessStateCmd->setOrder(4);
             $brightnessStateCmd->save();
