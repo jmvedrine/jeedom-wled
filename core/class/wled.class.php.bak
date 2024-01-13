@@ -45,7 +45,7 @@ class wled extends eqLogic {
 			log::add('wled','debug','non GET request with url : '.$url);
 			$request_http = new com_http($url);
 			$request_http->setHeader(array(
-			  'Content-Type: application/json', 'Content-Length: '.strlen($_payload)
+			  'Content-Type: application/json'
 			));
 			if($_data !== null){
 			  if($_type == 'POST'){
@@ -292,7 +292,7 @@ class wled extends eqLogic {
 			$brightnessStateCmd->setLogicalId('brightness_state');
 			$brightnessStateCmd->setType('info');
 			$brightnessStateCmd->setSubType('numeric');
-			$brightnessStateCmd->setGeneric_type('LIGHT_BRIGHTNESS');
+			$brightnessStateCmd->setGeneric_type('LIGHT_STATE');
 			$brightnessStateCmd->setIsVisible(0);
 			$brightnessStateCmd->setOrder(4);
 			$brightnessStateCmd->save();
@@ -359,7 +359,7 @@ class wled extends eqLogic {
 			$effectNameCmd->setLogicalId('effect_name');
 			$effectNameCmd->setType('info');
 			$effectNameCmd->setSubType('string');
-			$effectNameCmd->setIsVisible(0);
+			$effectNameCmd->setIsVisible(1);
 			$effectNameCmd->setOrder(13);
 			$effectNameCmd->save();
 		}
