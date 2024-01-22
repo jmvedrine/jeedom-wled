@@ -68,19 +68,20 @@ Commandes
 
 Pour le moment le nombre de commandes disponibles dans cette première version est faible. le plugin s'enrichira par la suite.
 
-| Nom                                  | Type    | Sous type  | Rôle                                                                                                                                                               |
-| :--:                                 | :---:   | :---:      | :---:                                                                                                                                                              |
-| **On**                               | action  | autre      | Allume l'équipement.                                                                                                                                               |
-| **Off**                              | action  | autre      | Éteint l'équipement.                                                                                                                                               |
-| **Etat**                             | info    | binaire    | Indique si l'équipement est allumé ou éteint.                                                                                                                      |
-| **Luminosité**                       | action  | curseur    | Règle la luminosité( min = 0, max =255).                                                                                                                           |
-| **Etat Luminosité**                  | info    | numerique  | Valeur de la luminosité entre 0 et 255.                                                                                                                            |
-| **Couleur**                          | action  | couleur    | Couleur principale (RVB, pour le moment le plugin ne gère pas les leds RVBW)                                                                                        |
-| **Etat couleur**                     | info    | chaine     | Valeur hexadécimale de la couleur principale RVB.                                                                                                                  |
-| **Effet**                            | action  | liste      | Effet (la liste est récupérée sur le contrôleur et peut donc varier suivant la version de WLED)                                                                     |
-| **Etat effet**                       | info    | numerique  | Numéro de l'effet 
-| **Nom effet**                        | info    | chaine     | Nom de l'effet (récupéré sur le contrôleur et peut donc varier suivant la version de WLED)                                                                                                                                        |
-| **Vitesse effet**                    | action  | curseur    | Vitesse de l'effet (min = 0 est le plus lent, max = 255 est le plus rapide)                                                                                        |
-| **Etat vitesse effet**               | info    | numerique  | Valeur de la vitesse de l'effet entre 0 et 255                                                                                                                     |
-| **Intensité effet**                  | action  | curseur    | Intensité de l'effet (le résultat est variable suivant l'effet pour certains effets cette commande ne fait rien)                                                   |
-| **Etat intensité effet**             | info    | numerique  | Valeur de l'intensité de l'effet                                                                                                                                   |
+|           Nom            |  Type  | Sous type |                                                       Rôle                                                       |
+|:------------------------:|:------:|:---------:|:----------------------------------------------------------------------------------------------------------------:|
+|          **On**          | action |   autre   |                                               Allume l'équipement.                                               |
+|         **Off**          | action |   autre   |                                               Éteint l'équipement.                                               |
+|        **Toggle**        | action |   autre   |                                              Inverse l'état de l'équipement                                      |                                                                                                                                                                    |
+|         **Etat**         |  info  |  binaire  |                                  Indique si l'équipement est allumé ou éteint.                                   |
+|      **Luminosité**      | action |  curseur  |                                     Règle la luminosité( min = 0, max =255).                                     |
+|   **Etat Luminosité**    |  info  | numerique |                                     Valeur de la luminosité entre 0 et 255.                                      |
+|       **Couleur**        | action |  couleur  |                   Couleur principale (RVB, pour le moment le plugin ne gère pas les leds RVBW)                   |
+|     **Etat couleur**     |  info  |  chaine   |                                Valeur hexadécimale de la couleur principale RVB.                                 |
+|        **Effet**         | action |   liste   |         Effet (la liste est récupérée sur le contrôleur et peut donc varier suivant la version de WLED)          |
+|      **Etat effet**      |  info  | numerique |                                                Numéro de l'effet                                                 
+|      **Nom effet**       |  info  |  chaine   |            Nom de l'effet (récupéré sur le contrôleur et peut donc varier suivant la version de WLED)            |
+|    **Vitesse effet**     | action |  curseur  |                   Vitesse de l'effet (min = 0 est le plus lent, max = 255 est le plus rapide)                    |
+|  **Etat vitesse effet**  |  info  | numerique |                                  Valeur de la vitesse de l'effet entre 0 et 255                                  |
+|   **Intensité effet**    | action |  curseur  | Intensité de l'effet (le résultat est variable suivant l'effet pour certains effets cette commande ne fait rien) |
+| **Etat intensité effet** |  info  | numerique |                                         Valeur de l'intensité de l'effet                                         |
