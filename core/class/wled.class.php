@@ -153,6 +153,7 @@ class wled extends eqLogic {
                     if ($c->isDue()) {
                         try {
                             $eqLogic->getWledStatus();
+                            $eqLogic->getWledInfos();
                             $eqLogic->refreshWidget();
                         } catch (Exception $exc) {
                             log::add('wled', 'error', __('Error in ', __FILE__) . $eqLogic->getHumanName() . ' : ' . $exc->getMessage());
@@ -325,8 +326,6 @@ class wled extends eqLogic {
             $colorCmd->setOrder(5);
             $colorCmd->save();
         }
-        
-
         $colorStateCmd = $this->getCmd(null, "color_state");
         if (!is_object($colorStateCmd)) {
             $colorStateCmd = new wledCmd();
@@ -339,6 +338,58 @@ class wled extends eqLogic {
             $colorStateCmd->setIsVisible(0);
             $colorStateCmd->setOrder(6);
             $colorStateCmd->save();
+        }
+        $colorBgCmd = $this->getCmd(null, "color_bg");
+        if (!is_object($colorBgCmd)) {
+            $colorBgCmd = new wledCmd();
+            $colorBgCmd->setName(__('Couleur Bg', __FILE__));
+            $colorBgCmd->setEqLogic_id($this->getId());
+            $colorBgCmd->setLogicalId('color_bg');
+            $colorBgCmd->setType('action');
+            $colorBgCmd->setSubType('color');
+            $colorBgCmd->setGeneric_type('LIGHT_SET_COLOR');
+            $colorBgCmd->setIsVisible(1);
+            $colorBgCmd->setOrder(17);
+            $colorBgCmd->save();
+        }
+        $colorStateBgCmd = $this->getCmd(null, "color_state_bg");
+        if (!is_object($colorStateBgCmd)) {
+            $colorStateBgCmd = new wledCmd();
+            $colorStateBgCmd->setName(__('Etat Couleur Bg', __FILE__));
+            $colorStateBgCmd->setEqLogic_id($this->getId());
+            $colorStateBgCmd->setLogicalId('color_state_bg');
+            $colorStateBgCmd->setType('info');
+            $colorStateBgCmd->setSubType('string');
+            $colorStateBgCmd->setGeneric_type('LIGHT_COLOR');
+            $colorStateBgCmd->setIsVisible(0);
+            $colorStateBgCmd->setOrder(18);
+            $colorStateBgCmd->save();
+        }
+        $colorThirdCmd = $this->getCmd(null, "color_third");
+        if (!is_object($colorThirdCmd)) {
+            $colorThirdCmd = new wledCmd();
+            $colorThirdCmd->setName(__('Couleur Third', __FILE__));
+            $colorThirdCmd->setEqLogic_id($this->getId());
+            $colorThirdCmd->setLogicalId('color_third');
+            $colorThirdCmd->setType('action');
+            $colorThirdCmd->setSubType('color');
+            $colorThirdCmd->setGeneric_type('LIGHT_SET_COLOR');
+            $colorThirdCmd->setIsVisible(1);
+            $colorThirdCmd->setOrder(17);
+            $colorThirdCmd->save();
+        }
+        $colorStateThirdCmd = $this->getCmd(null, "color_state_third");
+        if (!is_object($colorStateThirdCmd)) {
+            $colorStateThirdCmd = new wledCmd();
+            $colorStateThirdCmd->setName(__('Etat Couleur Third', __FILE__));
+            $colorStateThirdCmd->setEqLogic_id($this->getId());
+            $colorStateThirdCmd->setLogicalId('color_state_third');
+            $colorStateThirdCmd->setType('info');
+            $colorStateThirdCmd->setSubType('string');
+            $colorStateThirdCmd->setGeneric_type('LIGHT_COLOR');
+            $colorStateThirdCmd->setIsVisible(0);
+            $colorStateThirdCmd->setOrder(18);
+            $colorStateThirdCmd->save();
         }
         $effectCmd = $this->getCmd(null, "effect");
         if (!is_object($effectCmd)) {
@@ -472,6 +523,17 @@ class wled extends eqLogic {
             $paletteNameCmd->setOrder(16);
             $paletteNameCmd->save();
         }
+       $effectCmd = $this->getCmd(null, "preset");
+        if (!is_object($effectCmd)) {
+            $effectCmd = new wledCmd();
+            $effectCmd->setName(__('Preset', __FILE__));
+            $effectCmd->setEqLogic_id($this->getId());
+            $effectCmd->setLogicalId('preset');
+            $effectCmd->setType('action');
+            $effectCmd->setSubType('message');
+            $effectCmd->setIsVisible(1);
+            $effectCmd->save();
+        }
         // Liens entre les commandes
         $onCmd->setValue($stateCmd->getId());
         $onCmd->save();
@@ -481,6 +543,10 @@ class wled extends eqLogic {
         $brightnessCmd->save();
         $colorCmd->setValue($colorStateCmd->getId());
         $colorCmd->save();
+        $colorBgCmd->setValue($colorStateBgCmd->getId());
+        $colorBgCmd->save();
+        $colorThirdCmd->setValue($colorStateThirdCmd->getId());
+        $colorThirdCmd->save();
         $effectCmd->setValue($effectStateCmd->getId());
         $effectCmd->save();
         $speedCmd->setValue($speedStateCmd->getId());
@@ -625,11 +691,21 @@ class wled extends eqLogic {
         }           
         $this->checkAndUpdateCmd('speed_state', $segment['sx']);
         $this->checkAndUpdateCmd('intensity_state', $segment['ix']);
+        log::add('wled', 'debug', 'segment '. print_r($segment, true));
+        
         $mainColor = $segment['col'][0];
         log::add('wled', 'debug', 'main color '. print_r($mainColor, true));
+        log::add('wled', 'debug', 'bg color '. print_r($bgColor, true));
+        log::add('wled', 'debug', 'third color '. print_r($thirdColor, true));
         $value = '#' . sprintf('%02x', $mainColor[0]) . sprintf('%02x', $mainColor[1]) . sprintf('%02x', $mainColor[2]);
         log::add('wled', 'debug', 'color value '. $value);
         $this->checkAndUpdateCmd('color_state', $value);
+        $value = '#' . sprintf('%02x', $bgColor[0]) . sprintf('%02x', $bgColor[1]) . sprintf('%02x', $bgColor[2]);
+        log::add('wled', 'debug', 'color bg value '. $value);
+        $this->checkAndUpdateCmd('color_state_bg', $value);
+        $value = '#' . sprintf('%02x', $thirdColor[0]) . sprintf('%02x', $thirdColor[1]) . sprintf('%02x', $thirdColor[2]);
+        log::add('wled', 'debug', 'color third value '. $value);
+        $this->checkAndUpdateCmd('color_state_third', $value);
     }
 
     public function updateEffects($result) {
@@ -735,10 +811,24 @@ class wledCmd extends cmd {
             $g = hexdec($g);
             $b = hexdec($b);
             $data = '{"seg":[{"id":' . $segment . ', "col":[[' . $r . ',' . $g . ',' .  $b . ']]}]}';
+        } else if ($action == 'color_bg') {
+            list($r, $g, $b) = str_split(str_replace('#', '', $_options['color']), 2);
+            $r = hexdec($r);
+            $g = hexdec($g);
+            $b = hexdec($b);
+            $data = '{"seg":[{"id":' . $segment . ', "col":[[],[' . $r . ',' . $g . ',' .  $b . '],[]]}]}'; 
+        } else if ($action == 'color_third') {
+            list($r, $g, $b) = str_split(str_replace('#', '', $_options['color']), 2);
+            $r = hexdec($r);
+            $g = hexdec($g);
+            $b = hexdec($b);
+            $data = '{"seg":[{"id":' . $segment . ', "col":[[],[],[' . $r . ',' . $g . ',' .  $b . '],[]]}]}'; 
         } else if ($action == 'speed') {
             $data = '{"seg":[{"id":' . $segment . ', "sx":' . intval($_options['slider']) . '}]}';
-        }  else if ($action == 'intensity') {
+        } else if ($action == 'intensity') {
             $data = '{"seg":[{"id":' . $segment . ', "sx":' . intval($_options['slider']) . '}]}';
+        }  else if ($action == 'preset') {
+            $data = '{"ps":' . intval($_options['message'])  . '}';
         }
         log::add('wled', 'debug', 'execute data '. $data);
         $endPoint ='/json/state';
