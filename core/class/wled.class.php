@@ -523,16 +523,16 @@ class wled extends eqLogic {
             $paletteNameCmd->setOrder(16);
             $paletteNameCmd->save();
         }
-       $effectCmd = $this->getCmd(null, "preset");
-        if (!is_object($effectCmd)) {
-            $effectCmd = new wledCmd();
-            $effectCmd->setName(__('Preset', __FILE__));
-            $effectCmd->setEqLogic_id($this->getId());
-            $effectCmd->setLogicalId('preset');
-            $effectCmd->setType('action');
-            $effectCmd->setSubType('message');
-            $effectCmd->setIsVisible(1);
-            $effectCmd->save();
+       $presetCmd = $this->getCmd(null, "preset");
+        if (!is_object($presetCmd)) {
+            $presetCmd = new wledCmd();
+            $presetCmd->setName(__('Preset', __FILE__));
+            $presetCmd->setEqLogic_id($this->getId());
+            $presetCmd->setLogicalId('preset');
+            $presetCmd->setType('action');
+            $presetCmd->setSubType('message');
+            $presetCmd->setIsVisible(1);
+            $presetCmd->save();
         }
         // Liens entre les commandes
         $onCmd->setValue($stateCmd->getId());
