@@ -48,6 +48,12 @@ require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 				$cmd->setOrder(13);
 				$cmd->save();
 			}
+			$cmd = $eqLogic->getCmd(null, 'preset');
+			if (is_object($cmd)) {
+				$cmd->setDisplay('title_disable', 1);
+				$cmd->setDisplay('message_placeholder', __('Preset', __FILE__));
+				$cmd->save();
+			}
 		}
   }
 
