@@ -29,7 +29,7 @@ class wled extends eqLogic {
    */
     
     /*     * ***********************Methode static*************************** */
-    public static function request($_ip,$_endpoint = '',$_payload = null,$_method='GET'){
+    public static function request($_ip,$_endpoint = '',$_payload = null,$_method='GET', $noReportError = false){
         $url = 'http://' . $_ip . $_endpoint;
         log::add('wled','debug','Request method : '.$_method);
         if($_method=='GET') {
@@ -58,6 +58,9 @@ class wled extends eqLogic {
                 }
             }
         }
+		if ($noReportError) {
+            $request_http->setNoReportError(true);
+		}
         $result = $request_http->exec(60,1);
         return $result;
     }
@@ -84,7 +87,7 @@ class wled extends eqLogic {
                         $ip = gethostbyname($localname[0].'.local');
                         log::add('wled', 'debug', 'Discovered '.$inpacket->answerrrs[1]->name. ' at '.$ip);
                         // Friendly name.
-                        $infos = wled::request($ip, '/json/infos', null, 'GET');
+                        $infos = self::request($ip, '/json/infos', null, 'GET', false);
                         log::add('wled', 'debug', 'request infos result '. $infos);
                         $infos = is_json($infos, $infos);
                         if(isset($infos['name'])){
@@ -93,7 +96,7 @@ class wled extends eqLogic {
                             $friendlyName= $localname[0].'.local';
                         }
                         log::add('wled', 'debug', 'friendlyName : ' . $friendlyName);
-                        $state = self::request($ip, '/json/state', null, 'GET');
+                        $state = self::request($ip, '/json/state', null, 'GET', false);
                         log::add('wled', 'debug', 'state : ' . $state);
                         $state = is_json($state, $state);
                         $mainSegment = $state['mainseg'];
@@ -562,6 +565,8 @@ class wled extends eqLogic {
             $presetCmd->setLogicalId('preset');
             $presetCmd->setType('action');
             $presetCmd->setSubType('message');
+			$presetCmd->setDisplay('title_disable', 1);
+			$presetCmd->setDisplay('message_placeholder', __('Preset', __FILE__));
             $presetCmd->setIsVisible(1);
             $presetCmd->save();
         }
@@ -625,7 +630,7 @@ class wled extends eqLogic {
         $endPoint ='/json/state';
         $ipAddress = $this->getConfiguration('ip_address');
         if ($ipAddress != '') {
-            $result = wled::request($ipAddress, $endPoint, null, 'GET');
+            $result = wled::request($ipAddress, $endPoint, null, 'GET', config::byKey('noCronErrors','wled'));
             log::add('wled', 'debug', 'request result '. $result);
             $result = is_json($result, $result);
             if (is_array($result)) {
@@ -639,7 +644,7 @@ class wled extends eqLogic {
         $endPoint ='/json/eff';
         $ipAddress = $this->getConfiguration('ip_address');
         if ($ipAddress != '') {
-            $result = wled::request($ipAddress, $endPoint, null, 'GET');
+            $result = wled::request($ipAddress, $endPoint, null, 'GET', false);
             log::add('wled', 'debug', 'getWledEfects request result '. $result);
             $result = is_json($result, $result);
             if (is_array($result)) {
@@ -655,7 +660,7 @@ class wled extends eqLogic {
         $endPoint ='/json/pal';
         $ipAddress = $this->getConfiguration('ip_address');
         if ($ipAddress != '') {
-            $result = wled::request($ipAddress, $endPoint, null, 'GET');
+            $result = wled::request($ipAddress, $endPoint, null, 'GET', false);
             log::add('wled', 'debug', 'getWledPalettes request result '. $result);
             $result = is_json($result, $result);
             if (is_array($result)) {
@@ -671,7 +676,7 @@ class wled extends eqLogic {
         $endPoint ='/json/infos';
         $ipAddress = $this->getConfiguration('ip_address');
         if ($ipAddress != '') {
-            $result = wled::request($ipAddress, $endPoint, null, 'GET');
+            $result = wled::request($ipAddress, $endPoint, null, 'GET', config::byKey('noCronErrors','wled'));
             log::add('wled', 'debug', 'getWledInfos request result '. $result);
             $result = is_json($result, $result);
             if (is_array($result)) {
@@ -859,12 +864,12 @@ class wledCmd extends cmd {
         } else if ($action == 'intensity') {
             $data = '{"seg":[{"id":' . $segment . ', "sx":' . intval($_options['slider']) . '}]}';
         }  else if ($action == 'preset') {
-            $data = '{"ps":' . intval($_options['message'])  . '}';
+            $data = '{"ps":' . $_options['message']  . '}';
         }
         log::add('wled', 'debug', 'execute data '. $data);
         $endPoint ='/json/state';
         $ipAddress = $eqLogic->getConfiguration('ip_address');
-        $result = wled::request($ipAddress, $endPoint, $data, 'POST');
+        $result = wled::request($ipAddress, $endPoint, $data, 'POST', false);
         log::add('wled', 'debug', 'execute request result '. $result);
         $eqLogic->getWledStatus();
         $eqLogic->refreshWidget();

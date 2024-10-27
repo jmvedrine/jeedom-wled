@@ -84,6 +84,10 @@ Pour le moment le nombre de commandes disponibles dans cette première version e
 | **Etat Luminosité**                  | info    | numerique  | Valeur de la luminosité entre 0 et 255.                                                                                                                            |
 | **Couleur**                          | action  | couleur    | Couleur principale (RVB, pour le moment le plugin ne gère pas les leds RVBW)                                                                                       |
 | **Etat couleur**                     | info    | chaine     | Valeur hexadécimale de la couleur principale RVB.                                                                                                                  |
+| **Couleur Bg**                       | action  | couleur    | Couleur secondaire (RVB, pour le moment le plugin ne gère pas les leds RVBW)                                                                                       |
+| **Etat couleur Bg**                  | info    | chaine     | Valeur hexadécimale de la couleur secondaire RVB.                                                                                                                  |
+| **Couleur Third**                    | action  | couleur    | Troisième couleur (RVB, pour le moment le plugin ne gère pas les leds RVBW)                                                                                        |
+| **Etat couleur Third**               | info    | chaine     | Valeur hexadécimale de la troisième couleur RVB.                                                                                                                   |
 | **Effet**                            | action  | liste      | Effet (la liste est récupérée sur le contrôleur et peut donc varier suivant la version de WLED)                                                                    |
 | **Etat effet**                       | info    | numerique  | Numéro de l'effet actif                                                                                                                                            |
 | **Nom effet**                        | info    | chaine     | Nom de l'effet (récupéré sur le contrôleur et peut donc varier suivant la version de WLED)                                                                         |
@@ -93,4 +97,10 @@ Pour le moment le nombre de commandes disponibles dans cette première version e
 | **Etat intensité effet**             | info    | numerique  | Valeur de l'intensité de l'effet                                                                                                                                   |
 | **Palette**                          | action  | liste      | Palette (la liste est récupérée sur le contrôleur et peut donc varier suivant la version de WLED)                                                                  |
 | **Etat effet**                       | info    | numerique  | Numéro de la palette active                                                                                                                                        |
-| **Nom effet**                        | info    | chaine     | Nom de la palette active (récupéré sur le contrôleur et peut donc varier suivant la version de WLED)                                                               |
+| **Nom palette**                      | info    | chaine     | Nom de la palette active (récupéré sur le contrôleur et peut donc varier suivant la version de WLED)                                                               |
+| **Preset**                           | action  | message    | Numéro du preset de 1 à 250 ou plus complexe entre double quotes " " (Voir ci-dessous)                                                                             |
+
+Utilisation de la commande action Preset
+===
+
+Il faut taper dans le champ Preset soit un numéro de preset à appliquer entre 1 et 250 soit par exemple "1~4~" pour enchaîner les preset entre 1 et 4 ou encore "4~10~r" pour choisir au hasard un preset entre 4 et 10 compris.
