@@ -103,4 +103,4 @@ Pour le moment le nombre de commandes disponibles dans cette première version e
 Utilisation de la commande action Preset
 ===
 
-Il faut taper dans le champ Preset soit un numéro de preset à appliquer entre 1 et 250 soit par exemple "1~4~" pour enchaîner les preset entre 1 et 4 ou encore "4~10~r" pour choisir au hasard un preset entre 4 et 10 compris.
+Il faut taper dans le champ Preset soit un numéro de preset à appliquer entre 1 et 250 soit par exemple `"1~4~"` pour enchaîner les preset entre 1 et 4 ou encore `"4~10~r"` pour choisir au hasard un preset entre 4 et 10 compris.
