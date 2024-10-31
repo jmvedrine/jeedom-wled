@@ -36,7 +36,7 @@ Les commandes on, off et luminosité agissent sur toutes les leds pour le segmen
 
 Modification de la commande action Preset pour permettre de passer autre chose qu'un numéro de Preset et masquage du champ Titre.
 
-Amélioration de la documentation pour la commande Preset et ajoutr des commandes qui n'étaient pas documentées (couleur secondaire et troisième couleur).
+Amélioration de la documentation pour la commande Preset et ajout des commandes qui n'étaient pas documentées (couleur secondaire et troisième couleur).
 
 #  31/10/2024
 
