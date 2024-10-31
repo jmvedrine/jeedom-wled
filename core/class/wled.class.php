@@ -567,8 +567,85 @@ class wled extends eqLogic {
             $presetCmd->setSubType('message');
 			$presetCmd->setDisplay('title_disable', 1);
 			$presetCmd->setDisplay('message_placeholder', __('Preset', __FILE__));
+			$presetCmd->setGeneric_type('DONT');
             $presetCmd->setIsVisible(1);
+			$presetCmd->setOrder(17);
             $presetCmd->save();
+        }
+        $psaveCmd = $this->getCmd(null, "psave");
+        if (!is_object($psaveCmd)) {
+            $psaveCmd = new wledCmd();
+            $psaveCmd->setName(__('Enregister preset', __FILE__));
+            $psaveCmd->setEqLogic_id($this->getId());
+            $psaveCmd->setLogicalId('psave');
+            $psaveCmd->setType('action');
+            $psaveCmd->setSubType('message');
+			$psaveCmd->setDisplay('title_disable', 1);
+			$psaveCmd->setDisplay('message_placeholder', __('Sauver dans preset', __FILE__));
+            $psaveCmd->setGeneric_type('DONT');
+            $psaveCmd->setIsVisible(0);
+            $psaveCmd->setOrder(18);
+            $psaveCmd->save();
+        }
+       $effectByNameCmd = $this->getCmd(null, "effectbyname");
+        if (!is_object($effectByNameCmd)) {
+            $effectByNameCmd = new wledCmd();
+            $effectByNameCmd->setName(__('Effet par nom', __FILE__));
+            $effectByNameCmd->setEqLogic_id($this->getId());
+            $effectByNameCmd->setLogicalId('effectbyname');
+            $effectByNameCmd->setType('action');
+            $effectByNameCmd->setSubType('message');
+			$effectByNameCmd->setDisplay('title_disable', 1);
+			$effectByNameCmd->setDisplay('message_placeholder', __('Nom effet', __FILE__));
+			$effectByNameCmd->setGeneric_type('DONT');
+            $effectByNameCmd->setIsVisible(0);
+			$effectByNameCmd->setOrder(19);
+            $effectByNameCmd->save();
+        }
+       $paletteByNameCmd = $this->getCmd(null, "palettebyname");
+        if (!is_object($paletteByNameCmd)) {
+            $paletteByNameCmd = new wledCmd();
+            $paletteByNameCmd->setName(__('Palette par nom', __FILE__));
+            $paletteByNameCmd->setEqLogic_id($this->getId());
+            $paletteByNameCmd->setLogicalId('palettebyname');
+            $paletteByNameCmd->setType('action');
+            $paletteByNameCmd->setSubType('message');
+			$paletteByNameCmd->setDisplay('title_disable', 1);
+			$paletteByNameCmd->setDisplay('message_placeholder', __('Nom palette', __FILE__));
+			$paletteByNameCmd->setGeneric_type('DONT');
+            $paletteByNameCmd->setIsVisible(0);
+			$paletteByNameCmd->setOrder(20);
+            $paletteByNameCmd->save();
+        }
+       $effectByNumCmd = $this->getCmd(null, "effectbynum");
+        if (!is_object($effectByNumCmd)) {
+            $effectByNumCmd = new wledCmd();
+            $effectByNumCmd->setName(__('Effet par numéro', __FILE__));
+            $effectByNumCmd->setEqLogic_id($this->getId());
+            $effectByNumCmd->setLogicalId('effectbynum');
+            $effectByNumCmd->setType('action');
+            $effectByNumCmd->setSubType('message');
+			$effectByNumCmd->setDisplay('title_disable', 1);
+			$effectByNumCmd->setDisplay('message_placeholder', __('Numéro effet', __FILE__));
+			$effectByNumCmd->setGeneric_type('DONT');
+            $effectByNumCmd->setIsVisible(0);
+			$effectByNumCmd->setOrder(21);
+            $effectByNumCmd->save();
+        }
+       $paletteByNumCmd = $this->getCmd(null, "palettebynum");
+        if (!is_object($paletteByNumCmd)) {
+            $paletteByNumCmd = new wledCmd();
+            $paletteByNumCmd->setName(__('Palette par numéro', __FILE__));
+            $paletteByNumCmd->setEqLogic_id($this->getId());
+            $paletteByNumCmd->setLogicalId('palettebynum');
+            $paletteByNumCmd->setType('action');
+            $paletteByNumCmd->setSubType('message');
+			$paletteByNumCmd->setDisplay('title_disable', 1);
+			$paletteByNumCmd->setDisplay('message_placeholder', __('Numéro palette', __FILE__));
+			$paletteByNumCmd->setGeneric_type('DONT');
+            $paletteByNumCmd->setIsVisible(0);
+			$paletteByNumCmd->setOrder(22);
+            $paletteByNumCmd->save();
         }
         // Liens entre les commandes
         $onCmd->setValue($stateCmd->getId());
@@ -863,9 +940,61 @@ class wledCmd extends cmd {
             $data = '{"seg":[{"id":' . $segment . ', "sx":' . intval($_options['slider']) . '}]}';
         } else if ($action == 'intensity') {
             $data = '{"seg":[{"id":' . $segment . ', "sx":' . intval($_options['slider']) . '}]}';
-        }  else if ($action == 'preset') {
+        } else if ($action == 'preset') {
             $data = '{"ps":' . $_options['message']  . '}';
-        }
+        } else if ($action == 'psave') {
+            $data = '{"psave":' . $_options['message']  . '}';
+        } else if ($action == 'effectbyname') {
+			$effectCmd = $eqLogic->getCmd(null, "effect");
+			if (is_object($effectCmd)) {
+				$listeffects = $effectCmd->getConfiguration('listValue', array());
+				$listeffects = explode(';', $listeffects);
+				foreach ($listeffects as $k => $option) {
+					$effect = explode('|', $option);
+					if ($effect[1] == $_options['message']) {
+						$data = '{"seg":[{"id":' . $segment . ', "fx":' . intval($effect[0]) . '}]}';
+					}
+				}
+			}
+		} else if ($action == 'palettebyname') {
+			$paletteCmd = $eqLogic->getCmd(null, "palette");
+			if (is_object($paletteCmd)) {
+				$listpalettes = $paletteCmd->getConfiguration('listValue', array());
+				$listpalettes = explode(';', $listpalettes);
+				foreach ($listpalettes as $k => $option) {
+					$palette = explode('|', $option);
+					if ($palette[1] == $_options['message']) {
+						$data = '{"seg":[{"id":' . $segment . ', "pal":' . intval($palette[0]) . '}]}';
+					}
+				}
+			}
+		} else if ($action == 'effectbynum') {
+			$effectCmd = $eqLogic->getCmd(null, "effect");
+			if (is_object($effectCmd)) {
+				$listeffects = $effectCmd->getConfiguration('listValue', array());
+				$listeffects = explode(';', $listeffects);
+				log::add('wled', 'debug', 'list effets '. print_r($listeffects, true));
+				foreach ($listeffects as $k => $option) {
+					$effect = explode('|', $option);
+					log::add('wled', 'debug', 'effet '. print_r($effect, true));
+					if ($effect[0] == $_options['message']) {
+						$data = '{"seg":[{"id":' . $segment . ', "fx":' . intval($effect[0]) . '}]}';
+					}
+				}
+			}
+		} else if ($action == 'palettebynum') {
+			$paletteCmd = $eqLogic->getCmd(null, "palette");
+			if (is_object($paletteCmd)) {
+				$listpalettes = $paletteCmd->getConfiguration('listValue', array());
+				$listpalettes = explode(';', $listpalettes);
+				foreach ($listpalettes as $k => $option) {
+					$palette = explode('|', $option);
+					if ($palette[0] == $_options['message']) {
+						$data = '{"seg":[{"id":' . $segment . ', "pal":' . intval($palette[0]) . '}]}';
+					}
+				}
+			}
+		}
         log::add('wled', 'debug', 'execute data '. $data);
         $endPoint ='/json/state';
         $ipAddress = $eqLogic->getConfiguration('ip_address');
