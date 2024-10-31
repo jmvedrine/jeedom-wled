@@ -33,6 +33,11 @@ Conformémént à la doc de WLED le segment 0 (segment principal) est toujours p
 Les commandes on, off et luminosité agissent sur toutes les leds pour le segment 0 (et la commande off réinitialise les effets poour tous les segments) alors que pour les autres segments ces commandes agissent seulemnt sur les leds du segment.
 
 # 27/10/2024
+
 Modification de la commande action Preset pour permettre de passer autre chose qu'un numéro de Preset et masquage du champ Titre.
 
 Amélioration de la documentation pour la commande Preset et ajoutr des commandes qui n'étaient pas documentées (couleur secondaire et troisième couleur).
+
+#  31/10/2024
+
+Ajout des commandes action Enregistrer preset, Effet par nom, Effet par numéro, Palette par nom, Palette par numéro.
