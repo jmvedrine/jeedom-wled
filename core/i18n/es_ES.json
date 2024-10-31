@@ -8,6 +8,9 @@
         "Couleur Bg": "Color Bg",
         "Couleur Third": "Color Tercero",
         "Effet": "Efecto",
+        "Effet par nom": "Efecto por nombre",
+        "Effet par numéro": "Efecto por número",
+        "Enregister preset": "Guardar preselección",
         "Error in ": "Error en",
         "Etat": "Estado",
         "Etat Couleur": "Estado Color",
@@ -25,8 +28,13 @@
         "Nom effet": "Nombre del efecto",
         "Nom palette": "Nombre de la paleta",
         "Nouvel équipement detecté": "Nuevos equipos detectados",
+        "Numéro effet": "Número de efecto",
+        "Numéro palette": "Número de paleta",
         "Palette": "Paleta",
+        "Palette par nom": "Paleta por nombre",
+        "Palette par numéro": "Palé por número",
         "Preset": "Preajuste",
+        "Sauver dans preset": "Guardar en preselección",
         "Vitesse effet": "Velocidad de efecto"
     },
     "plugins\/wled\/desktop\/js\/wled.js": {
@@ -86,7 +94,12 @@
         "Visible": "Visible",
         "Équipement": "Equipamiento"
     },
+    "plugins\/wled\/plugin_info\/configuration.php": {
+        "Activation dangereuse": "Activación peligrosa",
+        "Ignorer les erreurs lors du cron": "Ignorar errores de cron"
+    },
     "plugins\/wled\/plugin_info\/install.php": {
-        "Nom effet": "Nombre del efecto"
+        "Nom effet": "Nombre del efecto",
+        "Preset": "Preajuste"
     }
 }
