@@ -8,6 +8,9 @@
         "Couleur Bg": "Bg color",
         "Couleur Third": "Third color",
         "Effet": "Effect",
+        "Effet par nom": "Effect by name",
+        "Effet par numéro": "Effect by number",
+        "Enregister preset": "Save preset",
         "Error in ": "Error in",
         "Etat": "State",
         "Etat Couleur": "Status Color",
@@ -25,8 +28,13 @@
         "Nom effet": "Effect name",
         "Nom palette": "Pallet name",
         "Nouvel équipement detecté": "New equipment detected",
+        "Numéro effet": "Effect number",
+        "Numéro palette": "Pallet number",
         "Palette": "Pallet",
+        "Palette par nom": "Palette by name",
+        "Palette par numéro": "Pallet by number",
         "Preset": "Preset",
+        "Sauver dans preset": "Save to preset",
         "Vitesse effet": "Effect speed"
     },
     "plugins\/wled\/desktop\/js\/wled.js": {
@@ -86,7 +94,12 @@
         "Visible": "Visible",
         "Équipement": "Equipment"
     },
+    "plugins\/wled\/plugin_info\/configuration.php": {
+        "Activation dangereuse": "Dangerous activation",
+        "Ignorer les erreurs lors du cron": "Ignore cron errors"
+    },
     "plugins\/wled\/plugin_info\/install.php": {
-        "Nom effet": "Effect name"
+        "Nom effet": "Effect name",
+        "Preset": "Preset"
     }
 }
