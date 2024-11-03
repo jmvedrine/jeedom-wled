@@ -25,5 +25,19 @@ Nouvelle commande info de type chaîne donnant le nom de l'effet sélectionné (
 Le plugin ne fonctionne pas avec Jeedom 3.x donc il nécessite maintenant Jeedom 4.2.
 Les effets avec les noms 'RSVD' ou "-" ne sont pas valable (varie suivant le matériel) donc il sont maintenant retirés de la liste.
 
-# 13/01/2024
-Correction du type générique incorrect pour la commande info luminosité, ce qui conduisait à un dysfonctionnement avec les plugin mobile et homebridge.
+# 01/03/2023
+
+Support des segments
+Conformémént à la doc de WLED le segment 0 (segment principal) est toujours présent et comprends toute les leds. Eventuellement si d'autres segments ont été définis ils apparaissent avec le  numéro du segment dans le nom.
+
+Les commandes on, off et luminosité agissent sur toutes les leds pour le segment 0 (et la commande off réinitialise les effets poour tous les segments) alors que pour les autres segments ces commandes agissent seulemnt sur les leds du segment.
+
+# 27/10/2024
+
+Modification de la commande action Preset pour permettre de passer autre chose qu'un numéro de Preset et masquage du champ Titre.
+
+Amélioration de la documentation pour la commande Preset et ajout des commandes qui n'étaient pas documentées (couleur secondaire et troisième couleur).
+
+#  31/10/2024
+
+Ajout des commandes action Enregistrer preset, Effet par nom, Effet par numéro, Palette par nom, Palette par numéro.

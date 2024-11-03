@@ -135,10 +135,16 @@ $eqLogics = eqLogic::byType($plugin->getId());
 									<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="ip_address" placeholder="{{192.168.x.x}}"/>
 								</div>
 							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{Segment}}</label>
+								<div class="col-sm-7">
+									<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="segment" placeholder="0"/>
+								</div>
+							</div>
 							<!-- Champ de saisie du cron d'auto-actualisation + assistant cron -->
 							<!-- La fonction cron de la classe du plugin doit contenir le code prévu pour que ce champ soit fonctionnel -->
 							<div class="form-group">
-								<label class="col-sm-4 control-label">{{Auto-actualisation}}
+								<label class="col-sm-3 control-label">{{Auto-actualisation}}
 									<sup><i class="fas fa-question-circle tooltips" title="{{Fréquence de rafraîchissement des commandes infos de l'équipement}}"></i></sup>
 								</label>
 								<div class="col-sm-6">
@@ -158,6 +164,12 @@ $eqLogics = eqLogic::byType($plugin->getId());
 						<!-- Affiche un champ de commentaire par défaut mais vous pouvez y mettre ce que vous voulez -->
 						<div class="col-lg-6">
 							<legend><i class="fas fa-info"></i> {{Informations}}</legend>
+							<table id="table_infoseqlogic" class="table table-condensed" style="border-radius: 10px;">
+								<thead>
+								</thead>
+								<tbody>
+								</tbody>
+                            </table>
 							<div class="form-group">
 								<div class="text-center">
 									<img name="icon_visu" src="<?= $plugin->getPathImgIcon(); ?>" style="max-width:160px;"/>

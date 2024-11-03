@@ -1,0 +1,75 @@
+{
+    "plugins\/wled\/desktop\/php\/wled.php": {
+        "Rechercher": "Rechercher",
+        "Gestion": "Gestion",
+        "Ajouter": "Ajouter",
+        "Général": "Général",
+        "Objet parent": "Objet parent",
+        "Catégorie": "Catégorie",
+        "Sauvegarder": "Sauvegarder",
+        "Supprimer": "Supprimer",
+        "Aucun": "Aucun",
+        "Activer": "Activer",
+        "Visible": "Visible",
+        "Configuration": "Configuration",
+        "Dupliquer": "Dupliquer",
+        "Autoriser": "Autoriser",
+        "Avancée": "Avancée",
+        "Type": "Type",
+        "Nom": "Nom",
+        "Action": "Action",
+        "Auto-actualisation (cron)": "Auto-actualisation (cron)"
+    },
+
+    "plugins\/wled\/core\/ajax\/wled.ajax.php": {
+        "Aucune méthode correspondante à : ": "Aucune méthode correspondante à : ",
+        "401 - Accès non autorisé": "401 - Accès non autorisé"
+    },
+
+    "plugins\/wled\/core\/class\/wled.class.php": {
+        "Nouvel équipement detecté": "Nouvel équipement detecté",
+        "Expression cron non valide pour ": "Expression cron non valide pour ",
+        "L'adresse IP du WLED ne peut être vide": "L'adresse IP du WLED ne peut être vide",
+        "Etat": "Etat",
+        "Luminosité": "Luminosité",
+        "Etat Luminosité": "Etat Luminosité",
+        "Couleur": "Couleur",
+        "Etat Couleur": "Etat Couleur",
+        "Couleur Bg": "Couleur Bg",
+        "Etat Couleur Bg": "Etat Couleur Bg",
+        "Couleur Third": "Couleur Third",
+        "Etat Couleur Third": "Etat Couleur Third",
+        "Effet": "Effet",
+        "Etat effet": "Etat effet",
+        "Nom effet": "Nom effet",
+        "Vitesse effet": "Vitesse effet",
+        "Etat vitesse effet": "Etat vitesse effet",
+        "Intensité effet": "Intensité effet",
+        "Etat intensité effet": "Etat intensité effet",
+        "Palette": "Palette",
+        "Etat palette": "Etat palette",
+        "Nom palette": "Nom palette",
+        "Preset": "Preset"
+    },
+
+    "plugins\/wled\/desktop\/js\/wled.js": {
+        "Version WLED": "Version WLED",
+        "Nombre total de leds": "Nombre total de leds",
+        "Nombre de leds du segment": "Nombre de leds du segment",
+		"Puissance maximum (mA)": "Puissance maximum (mA)",
+		"Nombre d'effets": "Nombre d'effets",
+		"Nombre de palettes": "Nombre de palettes",
+		"Nom de la commande": "Nom de la commande",
+		"Choisir une icône": "Choisir une icône",
+		"Commande info liée": "Commande info liée",
+		"Aucune": "Aucune",
+        "Afficher": "Afficher",
+        "Historiser": "Historiser",
+        "Inverser": "Inverser",
+        "Min": "Min",
+        "Max": "Max",
+        "Unité": "Unité",
+        "Supprimer la commande": "Supprimer la commande",
+        "Découverte réussie": "Découverte réussie"
+    }
+}

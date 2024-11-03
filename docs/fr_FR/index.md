@@ -36,6 +36,8 @@ Bon assez de généralités. Pour débuter il vous faut
 
 Ce contrôleur peut être acheté tout fait, [voir la page](https://quinled.info/2020/02/11/quinled-dig-uno-pre-assembled-available/) ou le monter vous-même, on peut dans ce cas acheter juste le circuit imprimé chez DirtyPCB ou PCBWay et les composants, [voir les infos ici](https://quinled.info/2020/05/08/quinled-dig-uno-hardware-guide-2/) ceci dit cela n'est intéressant financièrement que si vous prévoyez d'en monter une série.
 
+Il existe aussi une version  avec 4 sorties (Quinled Dig Quad).
+
 Je vous conseille avant de vous lancer dans le plugin d'installer l'application WLED sur votre smartphone Android ou IOS et de vérifier que tout est OK que vous arrivez bien à commander vos leds. Cela vous permettra ausi de connaître l'adresse IP de votre ruban sur votre réseau local.
 
 Note : le plugin fonctionne en local sur votre réseau Wifi. il est totalement indépendant du web.
@@ -52,6 +54,10 @@ Création des équipements
 
 Vous pouvez cliquer sur le bouton Découverte et le plugin scannera votre réseau local à la recherche des contrôleurs Wled. Pour chaque équipement il récupérera l'adresse IP et le nom. Il ne vous restera plus qu'à les placer dans la pièce de votre choix pour pouvoir les utiliser. Par défaut l'intervalle d'actualisation est initialisé à "toutes les minutes" mais vous pouvez le changer.
 
+Si dans l'appli smartphone (ou dans l'interface web) vous avez défini plusieurs segments, un objet Jeedom sera créé pour le segment 0 appelé segment principal (qui comprends toutes les leds) et un objet pour chaque segment.
+Pour le segment principal (segment 0), les commandes on, off et luminosité agissent sur toutes les leds branchées sur le contrôleur situé à cette IP (et la commande off réinitialise les effets pour tous les segments) alors que pour les autres segments ces commandes agissent seulemnt sur les leds du segment.
+
+
 ## Création manuelle des équipements
 
 Vous pouvez aussi créer un équipement manuellement en cliquant sur le bouton "+".
@@ -59,6 +65,7 @@ Vous pouvez aussi créer un équipement manuellement en cliquant sur le bouton "
 Pour chaque équipement en plus des informations habituelles communes à tous les équipements dans les plugins Jeedom, vous devez préciser
 
 - l'adresse IP du contrôleur (en général sous la forme 192.168.x.x)
+- le numéro du segment (0 pour le segment principal qui comprends toutes les leds)
 - l'intervalle de rafraîchissement (auto-actualisation) des informations de l'équipement sous la forme d'une expression cron. N'hésitez pas à cliquer sur le petit bouton ? à droite si vous n'êtes pas familier avec les expressions cron et l'assistant fera le boulot pour vous.
 
 Sauvegardez. Voila c'est fini.
@@ -70,17 +77,35 @@ Pour le moment le nombre de commandes disponibles dans cette première version e
 
 | Nom                                  | Type    | Sous type  | Rôle                                                                                                                                                               |
 | :--:                                 | :---:   | :---:      | :---:                                                                                                                                                              |
-| **On**                               | action  | autre      | Allume l'équipement.                                                                                                                                               |
-| **Off**                              | action  | autre      | Éteint l'équipement.                                                                                                                                               |
+| **On**                               | action  | autre      | Allume l'équipement (pour le segment principal allume toutes les leds de tous les segments contrôlés à cette ip).                                                  |
+| **Off**                              | action  | autre      | Éteint l'équipement (pour le segment principal allume toutes les leds de tous les segments contrôlés à cette ip).                                                  |
 | **Etat**                             | info    | binaire    | Indique si l'équipement est allumé ou éteint.                                                                                                                      |
-| **Luminosité**                       | action  | curseur    | Règle la luminosité( min = 0, max =255).                                                                                                                           |
+| **Luminosité**                       | action  | curseur    | Règle la luminosité( min = 0, max =255, pour le segment principal règle la luminosité de toutes les leds de tous les segments contrôlés à cette ip).               |
 | **Etat Luminosité**                  | info    | numerique  | Valeur de la luminosité entre 0 et 255.                                                                                                                            |
-| **Couleur**                          | action  | couleur    | Couleur principale (RVB, pour le moment le plugin ne gère pas les leds RVBW)                                                                                        |
+| **Couleur**                          | action  | couleur    | Couleur principale (RVB, pour le moment le plugin ne gère pas les leds RVBW)                                                                                       |
 | **Etat couleur**                     | info    | chaine     | Valeur hexadécimale de la couleur principale RVB.                                                                                                                  |
-| **Effet**                            | action  | liste      | Effet (la liste est récupérée sur le contrôleur et peut donc varier suivant la version de WLED)                                                                     |
-| **Etat effet**                       | info    | numerique  | Numéro de l'effet 
-| **Nom effet**                        | info    | chaine     | Nom de l'effet (récupéré sur le contrôleur et peut donc varier suivant la version de WLED)                                                                                                                                        |
+| **Couleur Bg**                       | action  | couleur    | Couleur secondaire (RVB, pour le moment le plugin ne gère pas les leds RVBW)                                                                                       |
+| **Etat couleur Bg**                  | info    | chaine     | Valeur hexadécimale de la couleur secondaire RVB.                                                                                                                  |
+| **Couleur Third**                    | action  | couleur    | Troisième couleur (RVB, pour le moment le plugin ne gère pas les leds RVBW)                                                                                        |
+| **Etat couleur Third**               | info    | chaine     | Valeur hexadécimale de la troisième couleur RVB.                                                                                                                   |
+| **Effet**                            | action  | liste      | Effet (la liste est récupérée sur le contrôleur et peut donc varier suivant la version de WLED)                                                                    |
+| **Etat effet**                       | info    | numerique  | Numéro de l'effet actif                                                                                                                                            |
+| **Nom effet**                        | info    | chaine     | Nom de l'effet (récupéré sur le contrôleur et peut donc varier suivant la version de WLED)                                                                         |
 | **Vitesse effet**                    | action  | curseur    | Vitesse de l'effet (min = 0 est le plus lent, max = 255 est le plus rapide)                                                                                        |
 | **Etat vitesse effet**               | info    | numerique  | Valeur de la vitesse de l'effet entre 0 et 255                                                                                                                     |
 | **Intensité effet**                  | action  | curseur    | Intensité de l'effet (le résultat est variable suivant l'effet pour certains effets cette commande ne fait rien)                                                   |
 | **Etat intensité effet**             | info    | numerique  | Valeur de l'intensité de l'effet                                                                                                                                   |
+| **Palette**                          | action  | liste      | Palette (la liste est récupérée sur le contrôleur et peut donc varier suivant la version de WLED)                                                                  |
+| **Etat effet**                       | info    | numerique  | Numéro de la palette active                                                                                                                                        |
+| **Nom palette**                      | info    | chaine     | Nom de la palette active (récupéré sur le contrôleur et peut donc varier suivant la version de WLED)                                                               |
+| **Preset**                           | action  | message    | Applique un preset donné par son numéro de 1 à 250 ou plus complexe entre double quotes " " (Voir ci-dessous)                                                      |
+| **Effet par nom**                    | action  | message    | Applique l'effet ayant ce nom (s'il existe, sinon ne fait rien)                                                                                                    |
+| **Palette par nom**                  | action  | message    | Applique la palette ayant ce nom (si elle existe, sinon ne fait rien)                                                                                              |
+| **Effet par numéro**                 | action  | message    | Applique l'effet ayant ce numéro (s'il existe, sinon ne fait rien)                                                                                                 |
+| **Palette par numéro**               | action  | message    | Applique la palette ayant ce numéro (si elle existe, sinon ne fait rien)                                                                                           |
+| **Enregister preset**                | action  | message    | Enregiste l'état actuel dans le preset ayant ce numéro (de 1 à 250)                                                                                                |
+
+Utilisation de la commande action **Preset**
+===
+
+Il faut taper dans le champ Preset soit un numéro de preset à appliquer entre 1 et 250 soit par exemple `"1~4~"` pour enchaîner les preset entre 1 et 4 ou encore `"4~10~r"` pour choisir au hasard un preset entre 4 et 10 compris.
