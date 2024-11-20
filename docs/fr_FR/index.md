@@ -54,8 +54,8 @@ Création des équipements
 
 Vous pouvez cliquer sur le bouton Découverte et le plugin scannera votre réseau local à la recherche des contrôleurs Wled. Pour chaque équipement il récupérera l'adresse IP et le nom. Il ne vous restera plus qu'à les placer dans la pièce de votre choix pour pouvoir les utiliser. Par défaut l'intervalle d'actualisation est initialisé à "toutes les minutes" mais vous pouvez le changer.
 
-Si dans l'appli smartphone (ou dans l'interface web) vous avez défini plusieurs segments, un objet Jeedom sera créé pour le segment 0 appelé segment principal (qui comprends toutes les leds) et un objet pour chaque segment.
-Pour le segment principal (segment 0), les commandes on, off et luminosité agissent sur toutes les leds branchées sur le contrôleur situé à cette IP (et la commande off réinitialise les effets pour tous les segments) alors que pour les autres segments ces commandes agissent seulemnt sur les leds du segment.
+Si dans l'appli smartphone (ou dans l'interface web) vous avez défini plusieurs segments, un objet Jeedom sera créé pour chaque segment.
+Pour le segment principal (segment 0), il y a des commandes supplémentaires (Ruban on, Ruban off et luminosité globale) qui agissent sur toutes les leds branchées sur le contrôleur situé à cette IP (et il faut noter que la commande Ruban off réinitialise les effets pour tous les segments).
 
 
 ## Création manuelle des équipements
@@ -87,7 +87,7 @@ Elles sont équivalentes au bouton et au curseur de la page d'accueil de l'appli
 | :--:                                 | :---:   | :---:      | :---:                                                                                                                                                              |
 | **Ruban on**                         | action  | autre      | Allume toutes les leds de tous les segments contrôlés par ce contrôleur WLED.                                                  |
 | **Ruban off**                        | action  | autre      | Éteint toutes les leds de tous les segments contrôlés par ce contrôleur WLED.                                                  |
-| **Ruban état**                       | info    | binaire    | Indique si l'équipement ce contrôleur WLED est allumé ou éteint.                                                                                                                      |
+| **Ruban état**                       | info    | binaire    | Indique si l'équipement de ce contrôleur WLED est allumé ou éteint.                                                                                                                      |
 | **Ruban luminosité**                 | action  | curseur    | Règle la luminosité( min = 0, max =255) tous les segments contrôlés par ce contrôleur WLED.               |
 | **Ruban état Luminosité**            | info    | numerique  | Valeur de la luminosité entre 0 et 255.                                                                                                                            |
 
