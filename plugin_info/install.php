@@ -95,7 +95,7 @@ require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 					$powerStateCmd = new wledCmd();
 					$powerStateCmd->setName(__('Ruban état', __FILE__));
 					$powerStateCmd->setEqLogic_id($eqLogic->getId());
-					$powerStateCmd->setLogicalId('state');
+					$powerStateCmd->setLogicalId('power_state');
 					$powerStateCmd->setType('info');
 					$powerStateCmd->setSubType('binary');
 					$powerStateCmd->setGeneric_type('LIGHT_STATE');

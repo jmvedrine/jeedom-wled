@@ -308,9 +308,9 @@ class wled extends eqLogic {
             $powerStateCmd = $this->getCmd(null, "power_state");
             if (!is_object($powerStateCmd)) {
                 $powerStateCmd = new wledCmd();
-                $powerStateCmd->setName(__('Ruban etat', __FILE__));
+                $powerStateCmd->setName(__('Ruban état', __FILE__));
                 $powerStateCmd->setEqLogic_id($this->getId());
-                $powerStateCmd->setLogicalId('state');
+                $powerStateCmd->setLogicalId('power_state');
                 $powerStateCmd->setType('info');
                 $powerStateCmd->setSubType('binary');
                 $powerStateCmd->setGeneric_type('LIGHT_STATE');
