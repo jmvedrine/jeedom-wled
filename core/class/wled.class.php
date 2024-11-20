@@ -58,9 +58,9 @@ class wled extends eqLogic {
                 }
             }
         }
-		if ($noReportError) {
+        if ($noReportError) {
             $request_http->setNoReportError(true);
-		}
+        }
         $result = $request_http->exec(60,1);
         return $result;
     }
@@ -269,7 +269,91 @@ class wled extends eqLogic {
  // Fonction exécutée automatiquement après la sauvegarde (création ou mise à jour) de l'équipement 
     public function postSave() {
         // Création des commandes
+        $numseg = $this->getConfiguration('segment', 0);
+        if ($numseg == 0) {
+            // création des commandes globales
+            $powerOnCmd = $this->getCmd(null, "power_on");
+            if (!is_object($powerOnCmd)) {
+                $powerOnCmd = new wledCmd();
+                $powerOnCmd->setName('Ruban on');
+                $powerOnCmd->setEqLogic_id($this->getId());
+                $powerOnCmd->setLogicalId('power_on');
+                $powerOnCmd->setType('action');
+                $powerOnCmd->setSubType('other');
+                $powerOnCmd->setGeneric_type('LIGHT_ON');
+                $powerOnCmd->setIsVisible(1);
+                $powerOnCmd->setDisplay('icon','<i class="icon jeedom-lumiere-on"></i>');
+                $powerOnCmd->setTemplate('dashboard', 'light');
+                $powerOnCmd->setTemplate('mobile', 'light');
+                $powerOnCmd->setOrder(0);
+                $powerOnCmd->save();
+            }
 
+            $powerOffCmd = $this->getCmd(null, "power_off");
+            if (!is_object($powerOffCmd)) {
+                $powerOffCmd = new wledCmd();
+                $powerOffCmd->setName('Ruban Off');
+                $powerOffCmd->setEqLogic_id($this->getId());
+                $powerOffCmd->setLogicalId('power_off');
+                $powerOffCmd->setType('action');
+                $powerOffCmd->setSubType('other');
+                $powerOffCmd->setGeneric_type('LIGHT_OFF');
+                $powerOffCmd->setIsVisible(1);
+                $powerOffCmd->setDisplay('icon','<i class="icon jeedom-lumiere-off"></i>');
+                $powerOffCmd->setTemplate('dashboard', 'light');
+                $powerOffCmd->setTemplate('mobile', 'light');
+                $powerOffCmd->setOrder(1);
+                $powerOffCmd->save();
+            }
+            $powerStateCmd = $this->getCmd(null, "power_state");
+            if (!is_object($powerStateCmd)) {
+                $powerStateCmd = new wledCmd();
+                $powerStateCmd->setName(__('Ruban etat', __FILE__));
+                $powerStateCmd->setEqLogic_id($this->getId());
+                $powerStateCmd->setLogicalId('state');
+                $powerStateCmd->setType('info');
+                $powerStateCmd->setSubType('binary');
+                $powerStateCmd->setGeneric_type('LIGHT_STATE');
+                $powerStateCmd->setIsVisible(0);
+                $powerStateCmd->setOrder(2);
+                $powerStateCmd->save();
+            } 
+            $globalBrightnessCmd = $this->getCmd(null, "global_brightness");
+            if (!is_object($globalBrightnessCmd)) {
+                $globalBrightnessCmd = new wledCmd();
+                $globalBrightnessCmd->setName(__('Ruban luminosité', __FILE__));
+                $globalBrightnessCmd->setEqLogic_id($this->getId());
+                $globalBrightnessCmd->setLogicalId('global_brightness');
+                $globalBrightnessCmd->setType('action');
+                $globalBrightnessCmd->setSubType('slider');
+                $globalBrightnessCmd->setGeneric_type('LIGHT_SLIDER');
+                $globalBrightnessCmd->setConfiguration('minValue','0');
+                $globalBrightnessCmd->setConfiguration('maxValue','255');
+                $globalBrightnessCmd->setIsVisible(1);
+                $globalBrightnessCmd->setOrder(3);
+                $globalBrightnessCmd->save();
+            }
+            $globalBrightnessStateCmd = $this->getCmd(null, "global_brightness_state");
+            if (!is_object($globalBrightnessStateCmd)) {
+                $globalBrightnessStateCmd = new wledCmd();
+                $globalBrightnessStateCmd->setName(__('Ruban état luminosité', __FILE__));
+                $globalBrightnessStateCmd->setEqLogic_id($this->getId());
+                $globalBrightnessStateCmd->setLogicalId('global_brightness_state');
+                $globalBrightnessStateCmd->setType('info');
+                $globalBrightnessStateCmd->setSubType('numeric');
+                $globalBrightnessStateCmd->setGeneric_type('LIGHT_BRIGHTNESS');
+                $globalBrightnessStateCmd->setIsVisible(0);
+                $globalBrightnessStateCmd->setOrder(4);
+                $globalBrightnessStateCmd->save();
+            }
+            // Liens entre les commandes
+            $powerOnCmd->setValue($powerStateCmd->getId());
+            $powerOnCmd->save();
+            $powerOffCmd->setValue($powerStateCmd->getId());
+            $powerOffCmd->save();
+            $globalBrightnessCmd->setValue($globalBrightnessStateCmd->getId());
+            $globalBrightnessCmd->save();
+        }           
         $onCmd = $this->getCmd(null, "on");
         if (!is_object($onCmd)) {
             $onCmd = new wledCmd();
@@ -278,13 +362,12 @@ class wled extends eqLogic {
             $onCmd->setLogicalId('on');
             $onCmd->setType('action');
             $onCmd->setSubType('other');
-            $onCmd->setGeneric_type('LIGHT_ON');
             $onCmd->setIsVisible(1);
             $onCmd->setValue('on');
             $onCmd->setDisplay('icon','<i class="icon jeedom-lumiere-on"></i>');
             $onCmd->setTemplate('dashboard', 'light');
             $onCmd->setTemplate('mobile', 'light');
-            $onCmd->setOrder(0);
+            $onCmd->setOrder(5);
             $onCmd->save();
         }
 
@@ -296,13 +379,12 @@ class wled extends eqLogic {
             $offCmd->setLogicalId('off');
             $offCmd->setType('action');
             $offCmd->setSubType('other');
-            $offCmd->setGeneric_type('LIGHT_OFF');
             $offCmd->setIsVisible(1);
             $offCmd->setValue('off');
             $offCmd->setDisplay('icon','<i class="icon jeedom-lumiere-off"></i>');
             $offCmd->setTemplate('dashboard', 'light');
             $offCmd->setTemplate('mobile', 'light');
-            $offCmd->setOrder(1);
+            $offCmd->setOrder(6);
             $offCmd->save();
         }
         $stateCmd = $this->getCmd(null, "state");
@@ -313,9 +395,8 @@ class wled extends eqLogic {
             $stateCmd->setLogicalId('state');
             $stateCmd->setType('info');
             $stateCmd->setSubType('binary');
-            $stateCmd->setGeneric_type('LIGHT_STATE');
             $stateCmd->setIsVisible(0);
-            $stateCmd->setOrder(2);
+            $stateCmd->setOrder(7);
             $stateCmd->save();
         } 
         $brightnessCmd = $this->getCmd(null, "brightness");
@@ -326,11 +407,10 @@ class wled extends eqLogic {
             $brightnessCmd->setLogicalId('brightness');
             $brightnessCmd->setType('action');
             $brightnessCmd->setSubType('slider');
-            $brightnessCmd->setGeneric_type('LIGHT_SLIDER');
             $brightnessCmd->setConfiguration('minValue','0');
             $brightnessCmd->setConfiguration('maxValue','255');
             $brightnessCmd->setIsVisible(1);
-            $brightnessCmd->setOrder(3);
+            $brightnessCmd->setOrder(8);
             $brightnessCmd->save();
         }
         
@@ -342,9 +422,8 @@ class wled extends eqLogic {
             $brightnessStateCmd->setLogicalId('brightness_state');
             $brightnessStateCmd->setType('info');
             $brightnessStateCmd->setSubType('numeric');
-            $brightnessStateCmd->setGeneric_type('LIGHT_BRIGHTNESS');
             $brightnessStateCmd->setIsVisible(0);
-            $brightnessStateCmd->setOrder(4);
+            $brightnessStateCmd->setOrder(9);
             $brightnessStateCmd->save();
         } 
         $colorCmd = $this->getCmd(null, "color");
@@ -357,7 +436,7 @@ class wled extends eqLogic {
             $colorCmd->setSubType('color');
             $colorCmd->setGeneric_type('LIGHT_SET_COLOR');
             $colorCmd->setIsVisible(1);
-            $colorCmd->setOrder(5);
+            $colorCmd->setOrder(10);
             $colorCmd->save();
         }
         $colorStateCmd = $this->getCmd(null, "color_state");
@@ -370,7 +449,7 @@ class wled extends eqLogic {
             $colorStateCmd->setSubType('string');
             $colorStateCmd->setGeneric_type('LIGHT_COLOR');
             $colorStateCmd->setIsVisible(0);
-            $colorStateCmd->setOrder(6);
+            $colorStateCmd->setOrder(11);
             $colorStateCmd->save();
         }
         $colorBgCmd = $this->getCmd(null, "color_bg");
@@ -409,7 +488,7 @@ class wled extends eqLogic {
             $colorThirdCmd->setSubType('color');
             $colorThirdCmd->setGeneric_type('LIGHT_SET_COLOR');
             $colorThirdCmd->setIsVisible(1);
-            $colorThirdCmd->setOrder(17);
+            $colorThirdCmd->setOrder(19);
             $colorThirdCmd->save();
         }
         $colorStateThirdCmd = $this->getCmd(null, "color_state_third");
@@ -422,7 +501,7 @@ class wled extends eqLogic {
             $colorStateThirdCmd->setSubType('string');
             $colorStateThirdCmd->setGeneric_type('LIGHT_COLOR');
             $colorStateThirdCmd->setIsVisible(0);
-            $colorStateThirdCmd->setOrder(18);
+            $colorStateThirdCmd->setOrder(20);
             $colorStateThirdCmd->save();
         }
         $effectCmd = $this->getCmd(null, "effect");
@@ -436,7 +515,7 @@ class wled extends eqLogic {
             // The listValue will be updated later.
             $effectCmd->setGeneric_type('LIGHT_MODE');
             $effectCmd->setIsVisible(1);
-            $effectCmd->setOrder(7);
+            $effectCmd->setOrder(21);
             $effectCmd->save();
         }
         $effectStateCmd = $this->getCmd(null, "effect_state");
@@ -448,7 +527,7 @@ class wled extends eqLogic {
             $effectStateCmd->setType('info');
             $effectStateCmd->setSubType('numeric');
             $effectStateCmd->setIsVisible(0);
-            $effectStateCmd->setOrder(8);
+            $effectStateCmd->setOrder(22);
             $effectStateCmd->save();
         }
         $effectNameCmd = $this->getCmd(null, "effect_name");
@@ -460,7 +539,7 @@ class wled extends eqLogic {
             $effectNameCmd->setType('info');
             $effectNameCmd->setSubType('string');
             $effectNameCmd->setIsVisible(0);
-            $effectNameCmd->setOrder(13);
+            $effectNameCmd->setOrder(23);
             $effectNameCmd->save();
         }
         $speedCmd = $this->getCmd(null, "speed");
@@ -475,7 +554,7 @@ class wled extends eqLogic {
             $speedCmd->setConfiguration('minValue','0');
             $speedCmd->setConfiguration('maxValue','255');
             $speedCmd->setIsVisible(1);
-            $speedCmd->setOrder(9);
+            $speedCmd->setOrder(24);
             $speedCmd->save();
         }
         $speedStateCmd = $this->getCmd(null, "speed_state");
@@ -488,7 +567,7 @@ class wled extends eqLogic {
             $speedStateCmd->setSubType('numeric');
             $speedStateCmd->setGeneric_type('DONT');
             $speedStateCmd->setIsVisible(0);
-            $speedStateCmd->setOrder(10);
+            $speedStateCmd->setOrder(25);
             $speedStateCmd->save();
         }
         $intensityCmd = $this->getCmd(null, "intensity");
@@ -503,7 +582,7 @@ class wled extends eqLogic {
             $intensityCmd->setConfiguration('minValue','0');
             $intensityCmd->setConfiguration('maxValue','255');
             $intensityCmd->setIsVisible(1);
-            $intensityCmd->setOrder(11);
+            $intensityCmd->setOrder(26);
             $intensityCmd->save();
         }
         $intensityStateCmd = $this->getCmd(null, "intensity_state");
@@ -516,7 +595,7 @@ class wled extends eqLogic {
             $intensityStateCmd->setSubType('numeric');
             $intensityStateCmd->setGeneric_type('DONT');
             $intensityStateCmd->setIsVisible(0);
-            $intensityStateCmd->setOrder(12);
+            $intensityStateCmd->setOrder(27);
             $intensityStateCmd->save();
         }
         $paletteCmd = $this->getCmd(null, "palette");
@@ -530,7 +609,7 @@ class wled extends eqLogic {
             // The listValue will be updated later.
             $paletteCmd->setGeneric_type('LIGHT_MODE');
             $paletteCmd->setIsVisible(1);
-            $paletteCmd->setOrder(14);
+            $paletteCmd->setOrder(28);
             $paletteCmd->save();
         }
         $paletteStateCmd = $this->getCmd(null, "palette_state");
@@ -542,7 +621,7 @@ class wled extends eqLogic {
             $paletteStateCmd->setType('info');
             $paletteStateCmd->setSubType('numeric');
             $paletteStateCmd->setIsVisible(0);
-            $paletteStateCmd->setOrder(15);
+            $paletteStateCmd->setOrder(29);
             $paletteStateCmd->save();
         }
         $paletteNameCmd = $this->getCmd(null, "palette_name");
@@ -554,7 +633,7 @@ class wled extends eqLogic {
             $paletteNameCmd->setType('info');
             $paletteNameCmd->setSubType('string');
             $paletteNameCmd->setIsVisible(0);
-            $paletteNameCmd->setOrder(16);
+            $paletteNameCmd->setOrder(30);
             $paletteNameCmd->save();
         }
        $presetCmd = $this->getCmd(null, "preset");
@@ -565,11 +644,11 @@ class wled extends eqLogic {
             $presetCmd->setLogicalId('preset');
             $presetCmd->setType('action');
             $presetCmd->setSubType('message');
-			$presetCmd->setDisplay('title_disable', 1);
-			$presetCmd->setDisplay('message_placeholder', __('Preset', __FILE__));
-			$presetCmd->setGeneric_type('DONT');
+            $presetCmd->setDisplay('title_disable', 1);
+            $presetCmd->setDisplay('message_placeholder', __('Preset', __FILE__));
+            $presetCmd->setGeneric_type('DONT');
             $presetCmd->setIsVisible(1);
-			$presetCmd->setOrder(17);
+            $presetCmd->setOrder(31);
             $presetCmd->save();
         }
         $psaveCmd = $this->getCmd(null, "psave");
@@ -580,11 +659,11 @@ class wled extends eqLogic {
             $psaveCmd->setLogicalId('psave');
             $psaveCmd->setType('action');
             $psaveCmd->setSubType('message');
-			$psaveCmd->setDisplay('title_disable', 1);
-			$psaveCmd->setDisplay('message_placeholder', __('Sauver dans preset', __FILE__));
+            $psaveCmd->setDisplay('title_disable', 1);
+            $psaveCmd->setDisplay('message_placeholder', __('Sauver dans preset', __FILE__));
             $psaveCmd->setGeneric_type('DONT');
             $psaveCmd->setIsVisible(0);
-            $psaveCmd->setOrder(18);
+            $psaveCmd->setOrder(32);
             $psaveCmd->save();
         }
        $effectByNameCmd = $this->getCmd(null, "effectbyname");
@@ -595,11 +674,11 @@ class wled extends eqLogic {
             $effectByNameCmd->setLogicalId('effectbyname');
             $effectByNameCmd->setType('action');
             $effectByNameCmd->setSubType('message');
-			$effectByNameCmd->setDisplay('title_disable', 1);
-			$effectByNameCmd->setDisplay('message_placeholder', __('Nom effet', __FILE__));
-			$effectByNameCmd->setGeneric_type('DONT');
+            $effectByNameCmd->setDisplay('title_disable', 1);
+            $effectByNameCmd->setDisplay('message_placeholder', __('Nom effet', __FILE__));
+            $effectByNameCmd->setGeneric_type('DONT');
             $effectByNameCmd->setIsVisible(0);
-			$effectByNameCmd->setOrder(19);
+            $effectByNameCmd->setOrder(33);
             $effectByNameCmd->save();
         }
        $paletteByNameCmd = $this->getCmd(null, "palettebyname");
@@ -610,11 +689,11 @@ class wled extends eqLogic {
             $paletteByNameCmd->setLogicalId('palettebyname');
             $paletteByNameCmd->setType('action');
             $paletteByNameCmd->setSubType('message');
-			$paletteByNameCmd->setDisplay('title_disable', 1);
-			$paletteByNameCmd->setDisplay('message_placeholder', __('Nom palette', __FILE__));
-			$paletteByNameCmd->setGeneric_type('DONT');
+            $paletteByNameCmd->setDisplay('title_disable', 1);
+            $paletteByNameCmd->setDisplay('message_placeholder', __('Nom palette', __FILE__));
+            $paletteByNameCmd->setGeneric_type('DONT');
             $paletteByNameCmd->setIsVisible(0);
-			$paletteByNameCmd->setOrder(20);
+            $paletteByNameCmd->setOrder(34);
             $paletteByNameCmd->save();
         }
        $effectByNumCmd = $this->getCmd(null, "effectbynum");
@@ -625,11 +704,11 @@ class wled extends eqLogic {
             $effectByNumCmd->setLogicalId('effectbynum');
             $effectByNumCmd->setType('action');
             $effectByNumCmd->setSubType('message');
-			$effectByNumCmd->setDisplay('title_disable', 1);
-			$effectByNumCmd->setDisplay('message_placeholder', __('Numéro effet', __FILE__));
-			$effectByNumCmd->setGeneric_type('DONT');
+            $effectByNumCmd->setDisplay('title_disable', 1);
+            $effectByNumCmd->setDisplay('message_placeholder', __('Numéro effet', __FILE__));
+            $effectByNumCmd->setGeneric_type('DONT');
             $effectByNumCmd->setIsVisible(0);
-			$effectByNumCmd->setOrder(21);
+            $effectByNumCmd->setOrder(35);
             $effectByNumCmd->save();
         }
        $paletteByNumCmd = $this->getCmd(null, "palettebynum");
@@ -640,11 +719,11 @@ class wled extends eqLogic {
             $paletteByNumCmd->setLogicalId('palettebynum');
             $paletteByNumCmd->setType('action');
             $paletteByNumCmd->setSubType('message');
-			$paletteByNumCmd->setDisplay('title_disable', 1);
-			$paletteByNumCmd->setDisplay('message_placeholder', __('Numéro palette', __FILE__));
-			$paletteByNumCmd->setGeneric_type('DONT');
+            $paletteByNumCmd->setDisplay('title_disable', 1);
+            $paletteByNumCmd->setDisplay('message_placeholder', __('Numéro palette', __FILE__));
+            $paletteByNumCmd->setGeneric_type('DONT');
             $paletteByNumCmd->setIsVisible(0);
-			$paletteByNumCmd->setOrder(22);
+            $paletteByNumCmd->setOrder(36);
             $paletteByNumCmd->save();
         }
         // Liens entre les commandes
@@ -766,18 +845,30 @@ class wled extends eqLogic {
 
     public function applyState($result) {
         log::add('wled', 'debug', 'applyState for '. print_r($result, true));
-        $info = $result['on'];
+        $numseg = $this->getConfiguration('segment', 0);
+        if ($numseg == 0) {
+            // Etat global du ruban
+            $info = $result['on'];
+            if ($info) {
+                $this->checkAndUpdateCmd('power_state', 1);
+            } else {
+                $this->checkAndUpdateCmd('power_state', 0);
+            }
+            $info = $result['bri'];
+            $this->checkAndUpdateCmd('global_brightness_state', $info);
+        }
+        // Etat du segment
+        // A revoir utiliser segment "id"
+        $segment = $result['seg'][$numseg];
+        log::add('wled', 'debug', 'Traitement segment '. print_r($segment, true));
+        $info = $segment['on'];
         if ($info) {
             $this->checkAndUpdateCmd('state', 1);
         } else {
             $this->checkAndUpdateCmd('state', 0);
         }
-        $info = $result['bri'];
+        $info = $segment['bri'];
         $this->checkAndUpdateCmd('brightness_state', $info);
-        $numseg = $this->getConfiguration('segment', 0);
-        // A revoir utiliser segment "id"
-        $segment = $result['seg'][$numseg];
-        log::add('wled', 'debug', 'Traitement segment '. print_r($segment, true));
         $effectNumber = $segment['fx'];
         $this->checkAndUpdateCmd('effect_state', $effectNumber);
         $effectCmd = $this->getCmd(null, "effect");
@@ -896,24 +987,18 @@ class wledCmd extends cmd {
         $action= $this->getLogicalId();
         log::add('wled', 'debug', 'execute action '. $action);
         log::add('wled', 'debug', 'execute options '. print_r($_options, true));
-        if ($action == 'on') {
-            if ($segment == 0) {
+        if ($action == 'power_on') {
                 $data = '{"on":true}';
-            } else {
-                $data = '{"seg":[{"id":' . $segment . ', "on":true}]}';
-            }
+        } else if ($action == 'power_off') {
+            $data = '{"on":false}';
+        } else if ($action == 'global_brightness') {
+            $data = '{"bri":' . intval($_options['slider']) . '}';
+        } else if ($action == 'on') {
+            $data = '{"seg":[{"id":' . $segment . ', "on":true}]}';
         } else if ($action == 'off') {
-            if ($segment == 0) {
-                $data = '{"on":false}';
-            } else {
-                $data = '{"seg":[{"id":' . $segment . ', "on":false}]}';
-            }
+            $data = '{"seg":[{"id":' . $segment . ', "on":false}]}';
         } else if ($action == 'brightness') {
-            if ($segment == 0) {
-                $data = '{"bri":' . intval($_options['slider']) . '}';
-            } else {
-                $data = '{"seg":[{"id":' . $segment . ', "bri":' . intval($_options['slider']) . '}]}';
-            }
+            $data = '{"seg":[{"id":' . $segment . ', "bri":' . intval($_options['slider']) . '}]}';
         } else if ($action == 'effect') {
             $data = '{"seg":[{"id":' . $segment . ', "fx":' . intval($_options['select']) . '}]}';
         } else if ($action == 'palette') {
@@ -945,56 +1030,56 @@ class wledCmd extends cmd {
         } else if ($action == 'psave') {
             $data = '{"psave":' . $_options['message']  . '}';
         } else if ($action == 'effectbyname') {
-			$effectCmd = $eqLogic->getCmd(null, "effect");
-			if (is_object($effectCmd)) {
-				$listeffects = $effectCmd->getConfiguration('listValue', array());
-				$listeffects = explode(';', $listeffects);
-				foreach ($listeffects as $k => $option) {
-					$effect = explode('|', $option);
-					if ($effect[1] == $_options['message']) {
-						$data = '{"seg":[{"id":' . $segment . ', "fx":' . intval($effect[0]) . '}]}';
-					}
-				}
-			}
-		} else if ($action == 'palettebyname') {
-			$paletteCmd = $eqLogic->getCmd(null, "palette");
-			if (is_object($paletteCmd)) {
-				$listpalettes = $paletteCmd->getConfiguration('listValue', array());
-				$listpalettes = explode(';', $listpalettes);
-				foreach ($listpalettes as $k => $option) {
-					$palette = explode('|', $option);
-					if ($palette[1] == $_options['message']) {
-						$data = '{"seg":[{"id":' . $segment . ', "pal":' . intval($palette[0]) . '}]}';
-					}
-				}
-			}
-		} else if ($action == 'effectbynum') {
-			$effectCmd = $eqLogic->getCmd(null, "effect");
-			if (is_object($effectCmd)) {
-				$listeffects = $effectCmd->getConfiguration('listValue', array());
-				$listeffects = explode(';', $listeffects);
-				log::add('wled', 'debug', 'list effets '. print_r($listeffects, true));
-				foreach ($listeffects as $k => $option) {
-					$effect = explode('|', $option);
-					log::add('wled', 'debug', 'effet '. print_r($effect, true));
-					if ($effect[0] == $_options['message']) {
-						$data = '{"seg":[{"id":' . $segment . ', "fx":' . intval($effect[0]) . '}]}';
-					}
-				}
-			}
-		} else if ($action == 'palettebynum') {
-			$paletteCmd = $eqLogic->getCmd(null, "palette");
-			if (is_object($paletteCmd)) {
-				$listpalettes = $paletteCmd->getConfiguration('listValue', array());
-				$listpalettes = explode(';', $listpalettes);
-				foreach ($listpalettes as $k => $option) {
-					$palette = explode('|', $option);
-					if ($palette[0] == $_options['message']) {
-						$data = '{"seg":[{"id":' . $segment . ', "pal":' . intval($palette[0]) . '}]}';
-					}
-				}
-			}
-		}
+            $effectCmd = $eqLogic->getCmd(null, "effect");
+            if (is_object($effectCmd)) {
+                $listeffects = $effectCmd->getConfiguration('listValue', array());
+                $listeffects = explode(';', $listeffects);
+                foreach ($listeffects as $k => $option) {
+                    $effect = explode('|', $option);
+                    if ($effect[1] == $_options['message']) {
+                        $data = '{"seg":[{"id":' . $segment . ', "fx":' . intval($effect[0]) . '}]}';
+                    }
+                }
+            }
+        } else if ($action == 'palettebyname') {
+            $paletteCmd = $eqLogic->getCmd(null, "palette");
+            if (is_object($paletteCmd)) {
+                $listpalettes = $paletteCmd->getConfiguration('listValue', array());
+                $listpalettes = explode(';', $listpalettes);
+                foreach ($listpalettes as $k => $option) {
+                    $palette = explode('|', $option);
+                    if ($palette[1] == $_options['message']) {
+                        $data = '{"seg":[{"id":' . $segment . ', "pal":' . intval($palette[0]) . '}]}';
+                    }
+                }
+            }
+        } else if ($action == 'effectbynum') {
+            $effectCmd = $eqLogic->getCmd(null, "effect");
+            if (is_object($effectCmd)) {
+                $listeffects = $effectCmd->getConfiguration('listValue', array());
+                $listeffects = explode(';', $listeffects);
+                log::add('wled', 'debug', 'list effets '. print_r($listeffects, true));
+                foreach ($listeffects as $k => $option) {
+                    $effect = explode('|', $option);
+                    log::add('wled', 'debug', 'effet '. print_r($effect, true));
+                    if ($effect[0] == $_options['message']) {
+                        $data = '{"seg":[{"id":' . $segment . ', "fx":' . intval($effect[0]) . '}]}';
+                    }
+                }
+            }
+        } else if ($action == 'palettebynum') {
+            $paletteCmd = $eqLogic->getCmd(null, "palette");
+            if (is_object($paletteCmd)) {
+                $listpalettes = $paletteCmd->getConfiguration('listValue', array());
+                $listpalettes = explode(';', $listpalettes);
+                foreach ($listpalettes as $k => $option) {
+                    $palette = explode('|', $option);
+                    if ($palette[0] == $_options['message']) {
+                        $data = '{"seg":[{"id":' . $segment . ', "pal":' . intval($palette[0]) . '}]}';
+                    }
+                }
+            }
+        }
         log::add('wled', 'debug', 'execute data '. $data);
         $endPoint ='/json/state';
         $ipAddress = $eqLogic->getConfiguration('ip_address');
@@ -1002,7 +1087,7 @@ class wledCmd extends cmd {
         log::add('wled', 'debug', 'execute request result '. $result);
         $eqLogic->getWledStatus();
         $eqLogic->refreshWidget();
-     }
+    }
 
     /*     * **********************Getteur Setteur*************************** */
 }

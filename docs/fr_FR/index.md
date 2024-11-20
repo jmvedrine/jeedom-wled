@@ -73,15 +73,33 @@ Sauvegardez. Voila c'est fini.
 Commandes
 ===
 
-Pour le moment le nombre de commandes disponibles dans cette première version est faible. le plugin s'enrichira par la suite.
+Commandes propres au segment 0 (segment principal)
+===
+
+Le segment 0 possède des commandes supplémentaires globales.
+Ces commandes agissent sur la totalité du ou des équipements reliés à ce contrôleur WLED (donc sur tous les segments).
+
+Elles sont équivalentes au bouton et au curseur de la page d'accueil de l'application smartphone.
+
+![wled01](../images/wled1.png)
 
 | Nom                                  | Type    | Sous type  | Rôle                                                                                                                                                               |
 | :--:                                 | :---:   | :---:      | :---:                                                                                                                                                              |
-| **On**                               | action  | autre      | Allume l'équipement (pour le segment principal allume toutes les leds de tous les segments contrôlés à cette ip).                                                  |
-| **Off**                              | action  | autre      | Éteint l'équipement (pour le segment principal allume toutes les leds de tous les segments contrôlés à cette ip).                                                  |
-| **Etat**                             | info    | binaire    | Indique si l'équipement est allumé ou éteint.                                                                                                                      |
-| **Luminosité**                       | action  | curseur    | Règle la luminosité( min = 0, max =255, pour le segment principal règle la luminosité de toutes les leds de tous les segments contrôlés à cette ip).               |
-| **Etat Luminosité**                  | info    | numerique  | Valeur de la luminosité entre 0 et 255.                                                                                                                            |
+| **Ruban on**                         | action  | autre      | Allume toutes les leds de tous les segments contrôlés par ce contrôleur WLED.                                                  |
+| **Ruban off**                        | action  | autre      | Éteint toutes les leds de tous les segments contrôlés par ce contrôleur WLED.                                                  |
+| **Ruban état**                       | info    | binaire    | Indique si l'équipement ce contrôleur WLED est allumé ou éteint.                                                                                                                      |
+| **Ruban luminosité**                 | action  | curseur    | Règle la luminosité( min = 0, max =255) tous les segments contrôlés par ce contrôleur WLED.               |
+| **Ruban état Luminosité**            | info    | numerique  | Valeur de la luminosité entre 0 et 255.                                                                                                                            |
+
+Commandes sur chaque segment
+
+| Nom                                  | Type    | Sous type  | Rôle                                                                                                                                                               |
+| :--:                                 | :---:   | :---:      | :---:                                                                                                                                                              |
+| **On**                               | action  | autre      | Allume le segment.                                                  |
+| **Off**                              | action  | autre      | Éteint le segment.                                                  |
+| **Etat**                             | info    | binaire    | Indique si le segment est allumé ou éteint.                                                                                                                      |
+| **Luminosité**                       | action  | curseur    | Règle la luminosité( min = 0, max =255) du segment.               |
+| **Etat Luminosité**                  | info    | numerique  | Valeur de la luminosité du segment entre 0 et 255.                                                                                                                            |
 | **Couleur**                          | action  | couleur    | Couleur principale (RVB, pour le moment le plugin ne gère pas les leds RVBW)                                                                                       |
 | **Etat couleur**                     | info    | chaine     | Valeur hexadécimale de la couleur principale RVB.                                                                                                                  |
 | **Couleur Bg**                       | action  | couleur    | Couleur secondaire (RVB, pour le moment le plugin ne gère pas les leds RVBW)                                                                                       |
