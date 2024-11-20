@@ -54,6 +54,91 @@ require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 				$cmd->setDisplay('message_placeholder', __('Preset', __FILE__));
 				$cmd->save();
 			}
+			$numseg = $eqLogic->getConfiguration('segment', 0);
+			if ($numseg == 0) {
+				// création des commandes globales
+				$powerOnCmd = $eqLogic->getCmd(null, "power_on");
+				if (!is_object($powerOnCmd)) {
+					$powerOnCmd = new wledCmd();
+					$powerOnCmd->setName('Ruban on');
+					$powerOnCmd->setEqLogic_id($eqLogic->getId());
+					$powerOnCmd->setLogicalId('power_on');
+					$powerOnCmd->setType('action');
+					$powerOnCmd->setSubType('other');
+					$powerOnCmd->setGeneric_type('LIGHT_ON');
+					$powerOnCmd->setIsVisible(1);
+					$powerOnCmd->setDisplay('icon','<i class="icon jeedom-lumiere-on"></i>');
+					$powerOnCmd->setTemplate('dashboard', 'light');
+					$powerOnCmd->setTemplate('mobile', 'light');
+					$powerOnCmd->setOrder(0);
+					$powerOnCmd->save();
+				}
+
+				$powerOffCmd = $eqLogic->getCmd(null, "power_off");
+				if (!is_object($powerOffCmd)) {
+					$powerOffCmd = new wledCmd();
+					$powerOffCmd->setName('Ruban Off');
+					$powerOffCmd->setEqLogic_id($eqLogic->getId());
+					$powerOffCmd->setLogicalId('power_off');
+					$powerOffCmd->setType('action');
+					$powerOffCmd->setSubType('other');
+					$powerOffCmd->setGeneric_type('LIGHT_OFF');
+					$powerOffCmd->setIsVisible(1);
+					$powerOffCmd->setDisplay('icon','<i class="icon jeedom-lumiere-off"></i>');
+					$powerOffCmd->setTemplate('dashboard', 'light');
+					$powerOffCmd->setTemplate('mobile', 'light');
+					$powerOffCmd->setOrder(1);
+					$powerOffCmd->save();
+				}
+				$powerStateCmd = $eqLogic->getCmd(null, "power_state");
+				if (!is_object($powerStateCmd)) {
+					$powerStateCmd = new wledCmd();
+					$powerStateCmd->setName(__('Ruban état', __FILE__));
+					$powerStateCmd->setEqLogic_id($eqLogic->getId());
+					$powerStateCmd->setLogicalId('state');
+					$powerStateCmd->setType('info');
+					$powerStateCmd->setSubType('binary');
+					$powerStateCmd->setGeneric_type('LIGHT_STATE');
+					$powerStateCmd->setIsVisible(0);
+					$powerStateCmd->setOrder(2);
+					$powerStateCmd->save();
+				} 
+				$globalBrightnessCmd = $eqLogic->getCmd(null, "global_brightness");
+				if (!is_object($globalBrightnessCmd)) {
+					$globalBrightnessCmd = new wledCmd();
+					$globalBrightnessCmd->setName(__('Ruban luminosité', __FILE__));
+					$globalBrightnessCmd->setEqLogic_id($eqLogic->getId());
+					$globalBrightnessCmd->setLogicalId('global_brightness');
+					$globalBrightnessCmd->setType('action');
+					$globalBrightnessCmd->setSubType('slider');
+					$globalBrightnessCmd->setGeneric_type('LIGHT_SLIDER');
+					$globalBrightnessCmd->setConfiguration('minValue','0');
+					$globalBrightnessCmd->setConfiguration('maxValue','255');
+					$globalBrightnessCmd->setIsVisible(1);
+					$globalBrightnessCmd->setOrder(3);
+					$globalBrightnessCmd->save();
+				}
+				$globalBrightnessStateCmd = $eqLogic->getCmd(null, "global_brightness_state");
+				if (!is_object($globalBrightnessStateCmd)) {
+					$globalBrightnessStateCmd = new wledCmd();
+					$globalBrightnessStateCmd->setName(__('Ruban état luminosité', __FILE__));
+					$globalBrightnessStateCmd->setEqLogic_id($eqLogic->getId());
+					$globalBrightnessStateCmd->setLogicalId('global_brightness_state');
+					$globalBrightnessStateCmd->setType('info');
+					$globalBrightnessStateCmd->setSubType('numeric');
+					$globalBrightnessStateCmd->setGeneric_type('LIGHT_BRIGHTNESS');
+					$globalBrightnessStateCmd->setIsVisible(0);
+					$globalBrightnessStateCmd->setOrder(4);
+					$globalBrightnessStateCmd->save();
+				}
+				// Liens entre les commandes
+				$powerOnCmd->setValue($powerStateCmd->getId());
+				$powerOnCmd->save();
+				$powerOffCmd->setValue($powerStateCmd->getId());
+				$powerOffCmd->save();
+				$globalBrightnessCmd->setValue($globalBrightnessStateCmd->getId());
+				$globalBrightnessCmd->save();
+			}
 		}
   }
 

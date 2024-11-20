@@ -32,13 +32,13 @@ Bon assez de généralités. Pour débuter il vous faut
 
 - des leds par exemple un ruban ou une guirlande avec des leds WS2812B ou WS2811 ou SK6812 ou WS2801 ou APA102
 - un ESP8266 ou ESP32 avec le programme WLED téléchargé dessus et configuré pour votre réseau Wifi et vos leds. Je ne m'étendrai pas sur comment faire, il existe de multiples tutos et vidéos YouTube qui expliquent cela
-- en option plutôt qu'un circuit "nu" ou bricolé sur une plaque je me permet de vous recommander le contrôleur [Dig Uno de Quinled](https://quinled.info/2018/09/15/quinled-dig-uno/) (et son grand frère Dig Quad qui peut contrôler 4 rubans). Il offre plusieurs avantages : il y a un fusible protecteur, il gère les tensions 5V et 12V, il y a un level shifter qui permet d'avoir un cable plus long entre le contrôleur et la première led sans que le signal ne se détériore,...
+- en option plutôt qu'un circuit "nu" ou bricolé sur une plaque je me permet de vous recommander le contrôleur [Dig Uno de Quinled](https://quinled.info/2018/09/15/quinled-dig-uno/) dont les dernières versions permettent de contrôler 2 rubans qui apparaîtront comme 2 segments (et son grand frère Dig Quad qui peut contrôler 4 rubans). Il offre plusieurs avantages : il y a un fusible protecteur, il gère les tensions 5V et 12V, il y a un level shifter qui permet d'avoir un cable plus long entre le contrôleur et la première led sans que le signal ne se détériore,...
 
 Ce contrôleur peut être acheté tout fait, [voir la page](https://quinled.info/2020/02/11/quinled-dig-uno-pre-assembled-available/) ou le monter vous-même, on peut dans ce cas acheter juste le circuit imprimé chez DirtyPCB ou PCBWay et les composants, [voir les infos ici](https://quinled.info/2020/05/08/quinled-dig-uno-hardware-guide-2/) ceci dit cela n'est intéressant financièrement que si vous prévoyez d'en monter une série.
 
 Il existe aussi une version  avec 4 sorties (Quinled Dig Quad).
 
-Je vous conseille avant de vous lancer dans le plugin d'installer l'application WLED sur votre smartphone Android ou IOS et de vérifier que tout est OK que vous arrivez bien à commander vos leds. Cela vous permettra ausi de connaître l'adresse IP de votre ruban sur votre réseau local.
+Je vous conseille avant de vous lancer dans le plugin d'installer l'application WLED sur votre smartphone Android ou IOS et de vérifier que tout est OK que vous arrivez bien à commander vos leds. Cela vous permettra aussi de connaître l'adresse IP de votre ruban sur votre réseau local.
 
 Note : le plugin fonctionne en local sur votre réseau Wifi. il est totalement indépendant du web.
 
@@ -55,7 +55,7 @@ Création des équipements
 Vous pouvez cliquer sur le bouton Découverte et le plugin scannera votre réseau local à la recherche des contrôleurs Wled. Pour chaque équipement il récupérera l'adresse IP et le nom. Il ne vous restera plus qu'à les placer dans la pièce de votre choix pour pouvoir les utiliser. Par défaut l'intervalle d'actualisation est initialisé à "toutes les minutes" mais vous pouvez le changer.
 
 Si dans l'appli smartphone (ou dans l'interface web) vous avez défini plusieurs segments, un objet Jeedom sera créé pour chaque segment.
-Pour le segment principal (segment 0), il y a des commandes supplémentaires (Ruban on, Ruban off et luminosité globale) qui agissent sur toutes les leds branchées sur le contrôleur situé à cette IP (et il faut noter que la commande Ruban off réinitialise les effets pour tous les segments).
+Pour le segment principal (segment 0), il y a des commandes supplémentaires (Ruban on, Ruban off et Luminosité globale) qui agissent sur toutes les leds branchées sur le contrôleur situé à cette IP (et il faut noter que la commande Ruban off réinitialise les effets pour tous les segments). Toutes les autres commandes agissent sur le segment concerné uniquement.
 
 
 ## Création manuelle des équipements
@@ -92,6 +92,7 @@ Elles sont équivalentes au bouton et au curseur de la page d'accueil de l'appli
 | **Ruban état Luminosité**            | info    | numerique  | Valeur de la luminosité entre 0 et 255.                                                                                                                            |
 
 Commandes sur chaque segment
+===
 
 | Nom                                  | Type    | Sous type  | Rôle                                                                                                                                                               |
 | :--:                                 | :---:   | :---:      | :---:                                                                                                                                                              |
