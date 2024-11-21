@@ -85,10 +85,10 @@ Elles sont équivalentes au bouton et au curseur de la page d'accueil de l'appli
 
 | Nom                                  | Type    | Sous type  | Rôle                                                                                                                                                               |
 | :--:                                 | :---:   | :---:      | :---:                                                                                                                                                              |
-| **Ruban on**                         | action  | autre      | Allume toutes les leds de tous les segments contrôlés par ce contrôleur WLED.                                                  |
-| **Ruban off**                        | action  | autre      | Éteint toutes les leds de tous les segments contrôlés par ce contrôleur WLED.                                                  |
-| **Ruban état**                       | info    | binaire    | Indique si l'équipement de ce contrôleur WLED est allumé ou éteint.                                                                                                                      |
-| **Ruban luminosité**                 | action  | curseur    | Règle la luminosité( min = 0, max =255) tous les segments contrôlés par ce contrôleur WLED.               |
+| **Ruban on**                         | action  | autre      | Allume toutes les leds de tous les segments contrôlés par ce contrôleur WLED.                                                                                      |
+| **Ruban off**                        | action  | autre      | Éteint toutes les leds de tous les segments contrôlés par ce contrôleur WLED.                                                                                      |
+| **Ruban état**                       | info    | binaire    | Indique si l'équipement de ce contrôleur WLED est allumé ou éteint.                                                                                                |
+| **Ruban luminosité**                 | action  | curseur    | Règle la luminosité( min = 0, max =255) tous les segments contrôlés par ce contrôleur WLED.                                                                        |
 | **Ruban état luminosité**            | info    | numerique  | Valeur de la luminosité entre 0 et 255.                                                                                                                            |
 
 Commandes sur chaque segment
@@ -96,11 +96,11 @@ Commandes sur chaque segment
 
 | Nom                                  | Type    | Sous type  | Rôle                                                                                                                                                               |
 | :--:                                 | :---:   | :---:      | :---:                                                                                                                                                              |
-| **On**                               | action  | autre      | Allume le segment.                                                  |
-| **Off**                              | action  | autre      | Éteint le segment.                                                  |
-| **Etat**                             | info    | binaire    | Indique si le segment est allumé ou éteint.                                                                                                                      |
-| **Luminosité**                       | action  | curseur    | Règle la luminosité( min = 0, max =255) du segment.               |
-| **Etat Luminosité**                  | info    | numerique  | Valeur de la luminosité du segment entre 0 et 255.                                                                                                                            |
+| **On**                               | action  | autre      | Allume le segment.                                                                                                                                                 |
+| **Off**                              | action  | autre      | Éteint le segment.                                                                                                                                                 |
+| **Etat**                             | info    | binaire    | Indique si le segment est allumé ou éteint.                                                                                                                        |
+| **Luminosité**                       | action  | curseur    | Règle la luminosité( min = 0, max =255) du segment.                                                                                                                |
+| **Etat Luminosité**                  | info    | numerique  | Valeur de la luminosité du segment entre 0 et 255.                                                                                                                 |
 | **Couleur**                          | action  | couleur    | Couleur principale (RVB, pour le moment le plugin ne gère pas les leds RVBW)                                                                                       |
 | **Etat couleur**                     | info    | chaine     | Valeur hexadécimale de la couleur principale RVB.                                                                                                                  |
 | **Couleur Bg**                       | action  | couleur    | Couleur secondaire (RVB, pour le moment le plugin ne gère pas les leds RVBW)                                                                                       |
@@ -117,14 +117,16 @@ Commandes sur chaque segment
 | **Palette**                          | action  | liste      | Palette (la liste est récupérée sur le contrôleur et peut donc varier suivant la version de WLED)                                                                  |
 | **Etat effet**                       | info    | numerique  | Numéro de la palette active                                                                                                                                        |
 | **Nom palette**                      | info    | chaine     | Nom de la palette active (récupéré sur le contrôleur et peut donc varier suivant la version de WLED)                                                               |
-| **Preset**                           | action  | message    | Applique un preset donné par son numéro de 1 à 250 ou plus complexe entre double quotes " " (Voir ci-dessous)                                                      |
+| **Preset**                           | action  | liste      | Preset par son nom (la liste est récupérée sur le contrôleur et varie donc suivant les presets créés)                                                              |
+| **Etat preset**                      | info    | numerique  | Numéro du preset actif                                                                                                                                             |
+| **Preset par numéro**                | action  | message    | Applique un preset donné par son numéro de 1 à 250 ou plus complexe entre double quotes " " (Voir ci-dessous)                                                      |
 | **Effet par nom**                    | action  | message    | Applique l'effet ayant ce nom (s'il existe, sinon ne fait rien)                                                                                                    |
 | **Palette par nom**                  | action  | message    | Applique la palette ayant ce nom (si elle existe, sinon ne fait rien)                                                                                              |
 | **Effet par numéro**                 | action  | message    | Applique l'effet ayant ce numéro (s'il existe, sinon ne fait rien)                                                                                                 |
 | **Palette par numéro**               | action  | message    | Applique la palette ayant ce numéro (si elle existe, sinon ne fait rien)                                                                                           |
 | **Enregister preset**                | action  | message    | Enregiste l'état actuel dans le preset ayant ce numéro (de 1 à 250)                                                                                                |
 
-Utilisation de la commande action **Preset**
+Utilisation de la commande action **Preset par numéro**
 ===
 
 Il faut taper dans le champ Preset soit un numéro de preset à appliquer entre 1 et 250 soit par exemple `"1~4~"` pour enchaîner les preset entre 1 et 4 ou encore `"4~10~r"` pour choisir au hasard un preset entre 4 et 10 compris.
