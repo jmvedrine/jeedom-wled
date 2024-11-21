@@ -25,14 +25,14 @@ require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 
 // Fonction exécutée automatiquement après la mise à jour du plugin
   function wled_update() {
-	    // normalizeName ne marche pas sur Allumer et Eteindre ce qui crée un bug sur le widget.
-      	foreach (eqLogic::byType('wled') as $eqLogic) {
+		// normalizeName ne marche pas sur Allumer et Eteindre ce qui crée un bug sur le widget.
+		foreach (eqLogic::byType('wled') as $eqLogic) {
 			$cmd = $eqLogic->getCmd(null, 'on');
 			if (is_object($cmd)) {
 				$cmd->setName('On');
 				$cmd->save();
 			}
-		    $cmd = $eqLogic->getCmd(null, 'off');
+			$cmd = $eqLogic->getCmd(null, 'off');
 			if (is_object($cmd)) {
 				$cmd->setName('Off');
 				$cmd->save();
@@ -52,8 +52,37 @@ require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 			if (is_object($cmd)) {
 				$cmd->setDisplay('title_disable', 1);
 				$cmd->setDisplay('message_placeholder', __('Preset', __FILE__));
+				$cmd->setName(__('Preset par numéro', __FILE__));
 				$cmd->save();
 			}
+			$presetByListCmd = $eqLogic->getCmd(null, 'presetbylist');
+			if (!is_object($presetByListCmd)) {
+				$presetByListCmd = new wledCmd();
+				$presetByListCmd->setName(__('Preset', __FILE__));
+				$presetByListCmd->setEqLogic_id($eqLogic->getId());
+				$presetByListCmd->setLogicalId('presetbylist');
+				$presetByListCmd->setType('action');
+				$presetByListCmd->setSubType('select');
+				// The listValue will be updated later.
+				$presetByListCmd->setGeneric_type('LIGHT_MODE');
+				$presetByListCmd->setIsVisible(1);
+				$presetByListCmd->setOrder(37);
+				$presetByListCmd->save();
+			}
+			$presetStateCmd = $eqLogic->getCmd(null, "preset_state");
+			if (!is_object($presetStateCmd)) {
+				$presetStateCmd = new wledCmd();
+				$presetStateCmd->setName(__('Etat preset', __FILE__));
+				$presetStateCmd->setEqLogic_id($eqLogic->getId());
+				$presetStateCmd->setLogicalId('preset_state');
+				$presetStateCmd->setType('info');
+				$presetStateCmd->setSubType('numeric');
+				$presetStateCmd->setIsVisible(0);
+				$presetStateCmd->setOrder(38);
+				$presetStateCmd->save();
+			}
+			$presetByListCmd->setValue($presetStateCmd->getId());
+			$presetByListCmd->save();
 			$numseg = $eqLogic->getConfiguration('segment', 0);
 			if ($numseg == 0) {
 				// création des commandes globales
