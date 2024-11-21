@@ -77,7 +77,7 @@ require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 				$powerOffCmd = $eqLogic->getCmd(null, "power_off");
 				if (!is_object($powerOffCmd)) {
 					$powerOffCmd = new wledCmd();
-					$powerOffCmd->setName('Ruban Off');
+					$powerOffCmd->setName('Ruban off');
 					$powerOffCmd->setEqLogic_id($eqLogic->getId());
 					$powerOffCmd->setLogicalId('power_off');
 					$powerOffCmd->setType('action');

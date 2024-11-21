@@ -292,7 +292,7 @@ class wled extends eqLogic {
             $powerOffCmd = $this->getCmd(null, "power_off");
             if (!is_object($powerOffCmd)) {
                 $powerOffCmd = new wledCmd();
-                $powerOffCmd->setName('Ruban Off');
+                $powerOffCmd->setName('Ruban off');
                 $powerOffCmd->setEqLogic_id($this->getId());
                 $powerOffCmd->setLogicalId('power_off');
                 $powerOffCmd->setType('action');

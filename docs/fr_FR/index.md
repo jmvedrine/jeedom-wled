@@ -89,7 +89,7 @@ Elles sont équivalentes au bouton et au curseur de la page d'accueil de l'appli
 | **Ruban off**                        | action  | autre      | Éteint toutes les leds de tous les segments contrôlés par ce contrôleur WLED.                                                  |
 | **Ruban état**                       | info    | binaire    | Indique si l'équipement de ce contrôleur WLED est allumé ou éteint.                                                                                                                      |
 | **Ruban luminosité**                 | action  | curseur    | Règle la luminosité( min = 0, max =255) tous les segments contrôlés par ce contrôleur WLED.               |
-| **Ruban état Luminosité**            | info    | numerique  | Valeur de la luminosité entre 0 et 255.                                                                                                                            |
+| **Ruban état luminosité**            | info    | numerique  | Valeur de la luminosité entre 0 et 255.                                                                                                                            |
 
 Commandes sur chaque segment
 ===
