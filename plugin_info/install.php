@@ -176,6 +176,14 @@ require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
                 if (is_object($presetStateCmd)) {
                     $presetStateCmd->remove();
                 }
+                $presetCmd = $eqLogic->getCmd(null, 'preset');
+                if (is_object($presetCmd)) {
+                    $presetCmd->remove();
+                }
+                $psaveCmd = $eqLogic->getCmd(null, 'psave');
+                if (is_object($psaveCmd)) {
+                    $psaveCmd->remove();
+                }
             }
         }
   }

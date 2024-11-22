@@ -372,6 +372,36 @@ class wled extends eqLogic {
                 $presetStateCmd->setOrder(38);
                 $presetStateCmd->save();
             }
+            $presetCmd = $this->getCmd(null, "preset");
+            if (!is_object($presetCmd)) {
+                $presetCmd = new wledCmd();
+                $presetCmd->setName(__('Preset par numéro', __FILE__));
+                $presetCmd->setEqLogic_id($this->getId());
+                $presetCmd->setLogicalId('preset');
+                $presetCmd->setType('action');
+                $presetCmd->setSubType('message');
+                $presetCmd->setDisplay('title_disable', 1);
+                $presetCmd->setDisplay('message_placeholder', __('Preset', __FILE__));
+                $presetCmd->setGeneric_type('DONT');
+                $presetCmd->setIsVisible(1);
+                $presetCmd->setOrder(31);
+                $presetCmd->save();
+            }
+            $psaveCmd = $this->getCmd(null, "psave");
+            if (!is_object($psaveCmd)) {
+                $psaveCmd = new wledCmd();
+                $psaveCmd->setName(__('Enregister preset', __FILE__));
+                $psaveCmd->setEqLogic_id($this->getId());
+                $psaveCmd->setLogicalId('psave');
+                $psaveCmd->setType('action');
+                $psaveCmd->setSubType('message');
+                $psaveCmd->setDisplay('title_disable', 1);
+                $psaveCmd->setDisplay('message_placeholder', __('Sauver dans preset', __FILE__));
+                $psaveCmd->setGeneric_type('DONT');
+                $psaveCmd->setIsVisible(0);
+                $psaveCmd->setOrder(32);
+                $psaveCmd->save();
+            }
             // Liens entre les commandes
             $powerOnCmd->setValue($powerStateCmd->getId());
             $powerOnCmd->save();
@@ -663,36 +693,6 @@ class wled extends eqLogic {
             $paletteNameCmd->setIsVisible(0);
             $paletteNameCmd->setOrder(30);
             $paletteNameCmd->save();
-        }
-        $presetCmd = $this->getCmd(null, "preset");
-        if (!is_object($presetCmd)) {
-            $presetCmd = new wledCmd();
-            $presetCmd->setName(__('Preset par numéro', __FILE__));
-            $presetCmd->setEqLogic_id($this->getId());
-            $presetCmd->setLogicalId('preset');
-            $presetCmd->setType('action');
-            $presetCmd->setSubType('message');
-            $presetCmd->setDisplay('title_disable', 1);
-            $presetCmd->setDisplay('message_placeholder', __('Preset', __FILE__));
-            $presetCmd->setGeneric_type('DONT');
-            $presetCmd->setIsVisible(1);
-            $presetCmd->setOrder(31);
-            $presetCmd->save();
-        }
-        $psaveCmd = $this->getCmd(null, "psave");
-        if (!is_object($psaveCmd)) {
-            $psaveCmd = new wledCmd();
-            $psaveCmd->setName(__('Enregister preset', __FILE__));
-            $psaveCmd->setEqLogic_id($this->getId());
-            $psaveCmd->setLogicalId('psave');
-            $psaveCmd->setType('action');
-            $psaveCmd->setSubType('message');
-            $psaveCmd->setDisplay('title_disable', 1);
-            $psaveCmd->setDisplay('message_placeholder', __('Sauver dans preset', __FILE__));
-            $psaveCmd->setGeneric_type('DONT');
-            $psaveCmd->setIsVisible(0);
-            $psaveCmd->setOrder(32);
-            $psaveCmd->save();
         }
        $effectByNameCmd = $this->getCmd(null, "effectbyname");
         if (!is_object($effectByNameCmd)) {
