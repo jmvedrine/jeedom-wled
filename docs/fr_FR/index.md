@@ -79,8 +79,7 @@ Commandes propres au segment 0 (segment principal)
 Le segment 0 possède des commandes supplémentaires globales.
 Ces commandes agissent sur la totalité du ou des équipements reliés à ce contrôleur WLED (donc sur tous les segments).
 
-Elles sont équivalentes au bouton et au curseur de la page d'accueil de l'application smartphone.
-
+Ruban on, Ruban off et Ruban luminosité sont équivalentes au bouton et au curseur de la page d'accueil de l'application smartphone. 
 ![wled01](../images/wled1.png)
 
 | Nom                                  | Type    | Sous type  | Rôle                                                                                                                                                               |
@@ -90,6 +89,12 @@ Elles sont équivalentes au bouton et au curseur de la page d'accueil de l'appli
 | **Ruban état**                       | info    | binaire    | Indique si l'équipement de ce contrôleur WLED est allumé ou éteint.                                                                                                |
 | **Ruban luminosité**                 | action  | curseur    | Règle la luminosité( min = 0, max =255) tous les segments contrôlés par ce contrôleur WLED.                                                                        |
 | **Ruban état luminosité**            | info    | numerique  | Valeur de la luminosité entre 0 et 255.                                                                                                                            |
+| **Preset**                           | action  | liste      | Preset par son nom (la liste est récupérée sur le contrôleur et varie donc suivant les presets créés)                                                              |
+| **Etat preset**                      | info    | numerique  | Numéro du preset actif                                                                                                                                             |
+| **Preset par numéro**                | action  | message    | Applique un preset donné par son numéro de 1 à 250 ou plus complexe entre double quotes " " (Voir ci-dessous)                                                      |
+| **Enregister preset**                | action  | message    | Enregiste l'état actuel dans le preset ayant ce numéro (de 1 à 250)                                                                                                |
+
+On trouve aussi ici les comandes relatives aux presets (y compris les playlists) qui s'appliquent à touis les segments.
 
 Commandes sur chaque segment
 ===
@@ -117,16 +122,12 @@ Commandes sur chaque segment
 | **Palette**                          | action  | liste      | Palette (la liste est récupérée sur le contrôleur et peut donc varier suivant la version de WLED)                                                                  |
 | **Etat effet**                       | info    | numerique  | Numéro de la palette active                                                                                                                                        |
 | **Nom palette**                      | info    | chaine     | Nom de la palette active (récupéré sur le contrôleur et peut donc varier suivant la version de WLED)                                                               |
-| **Preset**                           | action  | liste      | Preset par son nom (la liste est récupérée sur le contrôleur et varie donc suivant les presets créés)                                                              |
-| **Etat preset**                      | info    | numerique  | Numéro du preset actif                                                                                                                                             |
-| **Preset par numéro**                | action  | message    | Applique un preset donné par son numéro de 1 à 250 ou plus complexe entre double quotes " " (Voir ci-dessous)                                                      |
 | **Effet par nom**                    | action  | message    | Applique l'effet ayant ce nom (s'il existe, sinon ne fait rien)                                                                                                    |
 | **Palette par nom**                  | action  | message    | Applique la palette ayant ce nom (si elle existe, sinon ne fait rien)                                                                                              |
 | **Effet par numéro**                 | action  | message    | Applique l'effet ayant ce numéro (s'il existe, sinon ne fait rien)                                                                                                 |
 | **Palette par numéro**               | action  | message    | Applique la palette ayant ce numéro (si elle existe, sinon ne fait rien)                                                                                           |
-| **Enregister preset**                | action  | message    | Enregiste l'état actuel dans le preset ayant ce numéro (de 1 à 250)                                                                                                |
 
-Utilisation de la commande action **Preset par numéro**
+Utilisation de la commande action **Preset par numéro** sur le segment 0.
 ===
 
 Il faut taper dans le champ Preset soit un numéro de preset à appliquer entre 1 et 250 soit par exemple `"1~4~"` pour enchaîner les preset entre 1 et 4 ou encore `"4~10~r"` pour choisir au hasard un preset entre 4 et 10 compris.

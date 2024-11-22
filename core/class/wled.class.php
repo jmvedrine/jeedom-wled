@@ -346,6 +346,32 @@ class wled extends eqLogic {
                 $globalBrightnessStateCmd->setOrder(4);
                 $globalBrightnessStateCmd->save();
             }
+            $presetByListCmd = $this->getCmd(null, 'presetbylist');
+            if (!is_object($presetByListCmd)) {
+                $presetByListCmd = new wledCmd();
+                $presetByListCmd->setName(__('Preset', __FILE__));
+                $presetByListCmd->setEqLogic_id($this->getId());
+                $presetByListCmd->setLogicalId('presetbylist');
+                $presetByListCmd->setType('action');
+                $presetByListCmd->setSubType('select');
+                // The listValue will be updated later.
+                $presetByListCmd->setGeneric_type('LIGHT_MODE');
+                $presetByListCmd->setIsVisible(1);
+                $presetByListCmd->setOrder(37);
+                $presetByListCmd->save();
+            }
+            $presetStateCmd = $this->getCmd(null, "preset_state");
+            if (!is_object($presetStateCmd)) {
+                $presetStateCmd = new wledCmd();
+                $presetStateCmd->setName(__('Etat preset', __FILE__));
+                $presetStateCmd->setEqLogic_id($this->getId());
+                $presetStateCmd->setLogicalId('preset_state');
+                $presetStateCmd->setType('info');
+                $presetStateCmd->setSubType('numeric');
+                $presetStateCmd->setIsVisible(0);
+                $presetStateCmd->setOrder(38);
+                $presetStateCmd->save();
+            }
             // Liens entre les commandes
             $powerOnCmd->setValue($powerStateCmd->getId());
             $powerOnCmd->save();
@@ -353,6 +379,8 @@ class wled extends eqLogic {
             $powerOffCmd->save();
             $globalBrightnessCmd->setValue($globalBrightnessStateCmd->getId());
             $globalBrightnessCmd->save();
+            $presetByListCmd->setValue($presetStateCmd->getId());
+            $presetByListCmd->save();
         }
         $onCmd = $this->getCmd(null, "on");
         if (!is_object($onCmd)) {
@@ -651,34 +679,6 @@ class wled extends eqLogic {
             $presetCmd->setOrder(31);
             $presetCmd->save();
         }
-        $presetByListCmd = $this->getCmd(null, 'presetbylist');
-        if (!is_object($presetByListCmd)) {
-            $presetByListCmd = new wledCmd();
-            $presetByListCmd->setName(__('Preset', __FILE__));
-            $presetByListCmd->setEqLogic_id($this->getId());
-            $presetByListCmd->setLogicalId('presetbylist');
-            $presetByListCmd->setType('action');
-            $presetByListCmd->setSubType('select');
-            // The listValue will be updated later.
-            $presetByListCmd->setGeneric_type('LIGHT_MODE');
-            $presetByListCmd->setIsVisible(1);
-            $presetByListCmd->setOrder(37);
-            $presetByListCmd->save();
-        }
-        $presetStateCmd = $this->getCmd(null, "preset_state");
-        if (!is_object($presetStateCmd)) {
-            $presetStateCmd = new wledCmd();
-            $presetStateCmd->setName(__('Etat preset', __FILE__));
-            $presetStateCmd->setEqLogic_id($this->getId());
-            $presetStateCmd->setLogicalId('preset_state');
-            $presetStateCmd->setType('info');
-            $presetStateCmd->setSubType('numeric');
-            $presetStateCmd->setIsVisible(0);
-            $presetStateCmd->setOrder(38);
-            $presetStateCmd->save();
-        }
-        $presetByListCmd->setValue($presetStateCmd->getId());
-        $presetByListCmd->save();
         $psaveCmd = $this->getCmd(null, "psave");
         if (!is_object($psaveCmd)) {
             $psaveCmd = new wledCmd();
@@ -897,10 +897,10 @@ class wled extends eqLogic {
             } else {
                 $this->checkAndUpdateCmd('power_state', 0);
             }
-            $info = $result['bri'];
-            $this->checkAndUpdateCmd('global_brightness_state', $info);
+            $this->checkAndUpdateCmd('global_brightness_state', $result['bri']);
+            $this->checkAndUpdateCmd('preset_state', $result['ps']);
         }
-        $this->checkAndUpdateCmd('preset_state', $result['ps']);
+        
         // Etat du segment
         // A revoir utiliser segment "id"
         $segment = $result['seg'][$numseg];
