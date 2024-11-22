@@ -20,6 +20,7 @@
         "Etat effet": "Estado de los efectos",
         "Etat intensité effet": "Estado de intensidad de los efectos",
         "Etat palette": "Estado de las paletas",
+        "Etat preset": "Estado preestablecido",
         "Etat vitesse effet": "Estado de la velocidad de los efectos",
         "Expression cron non valide pour ": "Expresión cron no válida para",
         "Intensité effet": "Intensidad de los efectos",
@@ -34,6 +35,10 @@
         "Palette par nom": "Paleta por nombre",
         "Palette par numéro": "Palé por número",
         "Preset": "Preajuste",
+        "Preset par numéro": "Preajuste por número",
+        "Ruban luminosité": "Cinta de luminosidad",
+        "Ruban état": "Barra de estado",
+        "Ruban état luminosité": "Barra de estado de luminosidad",
         "Sauver dans preset": "Guardar en preselección",
         "Vitesse effet": "Velocidad de efecto"
     },
@@ -99,7 +104,12 @@
         "Ignorer les erreurs lors du cron": "Ignorar errores de cron"
     },
     "plugins\/wled\/plugin_info\/install.php": {
+        "Etat preset": "Estado preestablecido",
         "Nom effet": "Nombre del efecto",
-        "Preset": "Preajuste"
+        "Preset": "Preajuste",
+        "Preset par numéro": "Preajuste por número",
+        "Ruban luminosité": "Cinta de luminosidad",
+        "Ruban état": "Barra de estado",
+        "Ruban état luminosité": "Barra de estado de luminosidad"
     }
 }
