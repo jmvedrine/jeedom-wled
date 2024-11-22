@@ -46,3 +46,5 @@ Ajout des commandes action Enregistrer preset, Effet par nom, Effet par numéro,
 
 Ajout des commandes Ruban on, Ruban off, Ruban luminosité, Ruban état, Ruban état luminosité uniquement sur le segment 0. Ces commandes agissent sur toutes les leds reliées au contrôleur.
 Désormais les commandes On, Off et Luminosité n'agissent plus que sur le segment correspondant même pour le segment 0.
+L'ancienne commande action message Preset est renommée Preset par numéro et une nouvelle commande action liste Preset fait son apparition avec la commande info numérique associée Etat preset.
+Les commandes relatives aux presets n'existent que sur le segment 0 puisqu'elles s'appliquent à tous les segments.

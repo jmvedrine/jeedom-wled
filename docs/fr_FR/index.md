@@ -94,7 +94,7 @@ Ruban on, Ruban off et Ruban luminosité sont équivalentes au bouton et au curs
 | **Preset par numéro**                | action  | message    | Applique un preset donné par son numéro de 1 à 250 ou plus complexe entre double quotes " " (Voir ci-dessous)                                                      |
 | **Enregister preset**                | action  | message    | Enregiste l'état actuel dans le preset ayant ce numéro (de 1 à 250)                                                                                                |
 
-On trouve aussi ici les comandes relatives aux presets (y compris les playlists) qui s'appliquent à touis les segments.
+On trouve aussi ici les comandes relatives aux presets (y compris les playlists) qui s'appliquent à tous les segments.
 
 Commandes sur chaque segment
 ===
