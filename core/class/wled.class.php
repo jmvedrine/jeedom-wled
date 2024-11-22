@@ -1089,6 +1089,8 @@ class wledCmd extends cmd {
             $data = '{"seg":[{"id":' . $segment . ', "sx":' . intval($_options['slider']) . '}]}';
         } else if ($action == 'preset') {
             $data = '{"ps":' . $_options['message']  . '}';
+        } else if ($action == 'presetbylist') {
+            $data = '{"ps":' . intval($_options['select']) . '}';
         } else if ($action == 'psave') {
             $data = '{"psave":' . $_options['message']  . '}';
         } else if ($action == 'effectbyname') {
