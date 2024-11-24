@@ -1093,7 +1093,12 @@ class wledCmd extends cmd {
         } else if ($action == 'presetbylist') {
             $data = '{"ps":' . intval($_options['select']) . '}';
         } else if ($action == 'psave') {
-            $data = '{"psave":' . $_options['message']  . '}';
+            $message = explode(':',$_options['message']);
+            if (isset($message[1]) && $message[1] != '') {
+                $data = $data = '{"psave":' . $message[0]  . ',"n":"' . $message[1] . '","ib":true,"sb":true}';
+            } else {
+                $data = $data = '{"psave":' . $message[0]  . '}';
+            }
         } else if ($action == 'effectbyname') {
             $effectCmd = $eqLogic->getCmd(null, "effect");
             if (is_object($effectCmd)) {
