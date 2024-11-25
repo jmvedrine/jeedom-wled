@@ -95,9 +95,12 @@ Ruban on, Ruban off et Ruban luminosité sont équivalentes au bouton et au curs
 | **Enregister preset**                | action  | message    | Enregiste l'état actuel dans le preset ayant ce numéro (de 1 à 250).                                                                                               |
 
 On trouve aussi ici les comandes relatives aux presets (y compris les playlists) qui s'appliquent à tous les segments.
-Pour la commande **Enregistrer preset**, il est possible de donner un nom au preset avec la syntaxe numéro:nom (le séparateur est un caractère :). Par exemple 6:Etoile enregistre l'état actuel dans le preset 6 avec le nom Etoile.
 
-Commandes sur chaque segment
+Pour la commande **Enregistrer preset**, il est possible de donner un nom au preset avec la syntaxe numéro:nom (le séparateur est un caractère :). Par exemple `6:Etoile` enregistre l'état actuel dans le preset 6 avec le nom Etoile.
+
+Pour la commande **Preset par numéro**, il faut taper dans le champ Preset soit un numéro de preset à appliquer entre 1 et 250 soit par exemple `"1~4~"` pour enchaîner les preset entre 1 et 4 ou encore `"4~10~r"` pour choisir au hasard un preset entre 4 et 10 compris.
+
+Commandes sur chaque segment (y compris le segment 0)
 ===
 
 | Nom                                  | Type    | Sous type  | Rôle                                                                                                                                                               |
@@ -105,7 +108,7 @@ Commandes sur chaque segment
 | **On**                               | action  | autre      | Allume le segment.                                                                                                                                                 |
 | **Off**                              | action  | autre      | Éteint le segment.                                                                                                                                                 |
 | **Etat**                             | info    | binaire    | Indique si le segment est allumé ou éteint.                                                                                                                        |
-| **Luminosité**                       | action  | curseur    | Règle la luminosité( min = 0, max =255) du segment.                                                                                                                |
+| **Luminosité**                       | action  | curseur    | Règle la luminosité du segment ( min = 0, max =255).                                                                                                                |
 | **Etat Luminosité**                  | info    | numerique  | Valeur de la luminosité du segment entre 0 et 255.                                                                                                                 |
 | **Couleur**                          | action  | couleur    | Couleur principale (RVB, pour le moment le plugin ne gère pas les leds RVBW)                                                                                       |
 | **Etat couleur**                     | info    | chaine     | Valeur hexadécimale de la couleur principale RVB.                                                                                                                  |
@@ -127,8 +130,3 @@ Commandes sur chaque segment
 | **Palette par nom**                  | action  | message    | Applique la palette ayant ce nom (si elle existe, sinon ne fait rien)                                                                                              |
 | **Effet par numéro**                 | action  | message    | Applique l'effet ayant ce numéro (s'il existe, sinon ne fait rien)                                                                                                 |
 | **Palette par numéro**               | action  | message    | Applique la palette ayant ce numéro (si elle existe, sinon ne fait rien)                                                                                           |
-
-Utilisation de la commande action **Preset par numéro** sur le segment 0.
-===
-
-Il faut taper dans le champ Preset soit un numéro de preset à appliquer entre 1 et 250 soit par exemple `"1~4~"` pour enchaîner les preset entre 1 et 4 ou encore `"4~10~r"` pour choisir au hasard un preset entre 4 et 10 compris.
