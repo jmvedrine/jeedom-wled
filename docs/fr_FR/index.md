@@ -32,13 +32,13 @@ Bon assez de généralités. Pour débuter il vous faut
 
 - des leds par exemple un ruban ou une guirlande avec des leds WS2812B ou WS2811 ou SK6812 ou WS2801 ou APA102
 - un ESP8266 ou ESP32 avec le programme WLED téléchargé dessus et configuré pour votre réseau Wifi et vos leds. Je ne m'étendrai pas sur comment faire, il existe de multiples tutos et vidéos YouTube qui expliquent cela
-- en option plutôt qu'un circuit "nu" ou bricolé sur une plaque je me permet de vous recommander le contrôleur [Dig Uno de Quinled](https://quinled.info/2018/09/15/quinled-dig-uno/) (et son grand frère Dig Quad qui peut contrôler 4 rubans). Il offre plusieurs avantages : il y a un fusible protecteur, il gère les tensions 5V et 12V, il y a un level shifter qui permet d'avoir un cable plus long entre le contrôleur et la première led sans que le signal ne se détériore,...
+- en option plutôt qu'un circuit "nu" ou bricolé sur une plaque je me permet de vous recommander le contrôleur [Dig Uno de Quinled](https://quinled.info/2018/09/15/quinled-dig-uno/) dont les dernières versions permettent de contrôler 2 rubans qui apparaîtront comme 2 segments (et son grand frère Dig Quad qui peut contrôler 4 rubans). Il offre plusieurs avantages : il y a un fusible protecteur, il gère les tensions 5V et 12V, il y a un level shifter qui permet d'avoir un cable plus long entre le contrôleur et la première led sans que le signal ne se détériore,...
 
 Ce contrôleur peut être acheté tout fait, [voir la page](https://quinled.info/2020/02/11/quinled-dig-uno-pre-assembled-available/) ou le monter vous-même, on peut dans ce cas acheter juste le circuit imprimé chez DirtyPCB ou PCBWay et les composants, [voir les infos ici](https://quinled.info/2020/05/08/quinled-dig-uno-hardware-guide-2/) ceci dit cela n'est intéressant financièrement que si vous prévoyez d'en monter une série.
 
 Il existe aussi une version  avec 4 sorties (Quinled Dig Quad).
 
-Je vous conseille avant de vous lancer dans le plugin d'installer l'application WLED sur votre smartphone Android ou IOS et de vérifier que tout est OK que vous arrivez bien à commander vos leds. Cela vous permettra ausi de connaître l'adresse IP de votre ruban sur votre réseau local.
+Je vous conseille avant de vous lancer dans le plugin d'installer l'application WLED sur votre smartphone Android ou IOS et de vérifier que tout est OK que vous arrivez bien à commander vos leds. Cela vous permettra aussi de connaître l'adresse IP de votre ruban sur votre réseau local.
 
 Note : le plugin fonctionne en local sur votre réseau Wifi. il est totalement indépendant du web.
 
@@ -54,8 +54,8 @@ Création des équipements
 
 Vous pouvez cliquer sur le bouton Découverte et le plugin scannera votre réseau local à la recherche des contrôleurs Wled. Pour chaque équipement il récupérera l'adresse IP et le nom. Il ne vous restera plus qu'à les placer dans la pièce de votre choix pour pouvoir les utiliser. Par défaut l'intervalle d'actualisation est initialisé à "toutes les minutes" mais vous pouvez le changer.
 
-Si dans l'appli smartphone (ou dans l'interface web) vous avez défini plusieurs segments, un objet Jeedom sera créé pour le segment 0 appelé segment principal (qui comprends toutes les leds) et un objet pour chaque segment.
-Pour le segment principal (segment 0), les commandes on, off et luminosité agissent sur toutes les leds branchées sur le contrôleur situé à cette IP (et la commande off réinitialise les effets pour tous les segments) alors que pour les autres segments ces commandes agissent seulemnt sur les leds du segment.
+Si dans l'appli smartphone (ou dans l'interface web) vous avez défini plusieurs segments, un objet Jeedom sera créé pour chaque segment.
+Pour le segment principal (segment 0), il y a des commandes supplémentaires (Ruban on, Ruban off et Luminosité globale) qui agissent sur toutes les leds branchées sur le contrôleur situé à cette IP (et il faut noter que la commande Ruban off réinitialise les effets pour tous les segments). Toutes les autres commandes agissent sur le segment concerné uniquement.
 
 
 ## Création manuelle des équipements
@@ -73,15 +73,43 @@ Sauvegardez. Voila c'est fini.
 Commandes
 ===
 
-Pour le moment le nombre de commandes disponibles dans cette première version est faible. le plugin s'enrichira par la suite.
+Commandes propres au segment 0 (segment principal)
+===
+
+Le segment 0 possède des commandes supplémentaires globales.
+Ces commandes agissent sur la totalité du ou des équipements reliés à ce contrôleur WLED (donc sur tous les segments).
+
+Ruban on, Ruban off et Ruban luminosité sont équivalentes au bouton et au curseur de la page d'accueil de l'application smartphone. 
+![wled01](../images/wled1.png)
 
 | Nom                                  | Type    | Sous type  | Rôle                                                                                                                                                               |
 | :--:                                 | :---:   | :---:      | :---:                                                                                                                                                              |
-| **On**                               | action  | autre      | Allume l'équipement (pour le segment principal allume toutes les leds de tous les segments contrôlés à cette ip).                                                  |
-| **Off**                              | action  | autre      | Éteint l'équipement (pour le segment principal allume toutes les leds de tous les segments contrôlés à cette ip).                                                  |
-| **Etat**                             | info    | binaire    | Indique si l'équipement est allumé ou éteint.                                                                                                                      |
-| **Luminosité**                       | action  | curseur    | Règle la luminosité( min = 0, max =255, pour le segment principal règle la luminosité de toutes les leds de tous les segments contrôlés à cette ip).               |
-| **Etat Luminosité**                  | info    | numerique  | Valeur de la luminosité entre 0 et 255.                                                                                                                            |
+| **Ruban on**                         | action  | autre      | Allume toutes les leds de tous les segments contrôlés par ce contrôleur WLED.                                                                                      |
+| **Ruban off**                        | action  | autre      | Éteint toutes les leds de tous les segments contrôlés par ce contrôleur WLED.                                                                                      |
+| **Ruban état**                       | info    | binaire    | Indique si l'équipement de ce contrôleur WLED est allumé ou éteint.                                                                                                |
+| **Ruban luminosité**                 | action  | curseur    | Règle la luminosité( min = 0, max =255) tous les segments contrôlés par ce contrôleur WLED.                                                                        |
+| **Ruban état luminosité**            | info    | numerique  | Valeur de la luminosité entre 0 et 255.                                                                                                                            |
+| **Preset**                           | action  | liste      | Preset par son nom (la liste est récupérée sur le contrôleur et varie donc suivant les presets créés)                                                              |
+| **Etat preset**                      | info    | numerique  | Numéro du preset actif                                                                                                                                             |
+| **Preset par numéro**                | action  | message    | Applique un preset donné par son numéro de 1 à 250 ou plus complexe entre double quotes " " (Voir ci-dessous)                                                      |
+| **Enregister preset**                | action  | message    | Enregiste l'état actuel dans le preset ayant ce numéro (de 1 à 250).                                                                                               |
+
+On trouve aussi ici les comandes relatives aux presets (y compris les playlists) qui s'appliquent à tous les segments.
+
+Pour la commande **Enregistrer preset**, il est possible de donner un nom au preset avec la syntaxe numéro:nom (le séparateur est un caractère :). Par exemple `6:Etoile` enregistre l'état actuel dans le preset 6 avec le nom Etoile.
+
+Pour la commande **Preset par numéro**, il faut taper dans le champ Preset soit un numéro de preset à appliquer entre 1 et 250 soit par exemple `"1~4~"` pour enchaîner les preset entre 1 et 4 ou encore `"4~10~r"` pour choisir au hasard un preset entre 4 et 10 compris.
+
+Commandes sur chaque segment (y compris le segment 0)
+===
+
+| Nom                                  | Type    | Sous type  | Rôle                                                                                                                                                               |
+| :--:                                 | :---:   | :---:      | :---:                                                                                                                                                              |
+| **On**                               | action  | autre      | Allume le segment.                                                                                                                                                 |
+| **Off**                              | action  | autre      | Éteint le segment.                                                                                                                                                 |
+| **Etat**                             | info    | binaire    | Indique si le segment est allumé ou éteint.                                                                                                                        |
+| **Luminosité**                       | action  | curseur    | Règle la luminosité du segment ( min = 0, max =255).                                                                                                                |
+| **Etat Luminosité**                  | info    | numerique  | Valeur de la luminosité du segment entre 0 et 255.                                                                                                                 |
 | **Couleur**                          | action  | couleur    | Couleur principale (RVB, pour le moment le plugin ne gère pas les leds RVBW)                                                                                       |
 | **Etat couleur**                     | info    | chaine     | Valeur hexadécimale de la couleur principale RVB.                                                                                                                  |
 | **Couleur Bg**                       | action  | couleur    | Couleur secondaire (RVB, pour le moment le plugin ne gère pas les leds RVBW)                                                                                       |
@@ -98,14 +126,7 @@ Pour le moment le nombre de commandes disponibles dans cette première version e
 | **Palette**                          | action  | liste      | Palette (la liste est récupérée sur le contrôleur et peut donc varier suivant la version de WLED)                                                                  |
 | **Etat effet**                       | info    | numerique  | Numéro de la palette active                                                                                                                                        |
 | **Nom palette**                      | info    | chaine     | Nom de la palette active (récupéré sur le contrôleur et peut donc varier suivant la version de WLED)                                                               |
-| **Preset**                           | action  | message    | Applique un preset donné par son numéro de 1 à 250 ou plus complexe entre double quotes " " (Voir ci-dessous)                                                      |
 | **Effet par nom**                    | action  | message    | Applique l'effet ayant ce nom (s'il existe, sinon ne fait rien)                                                                                                    |
 | **Palette par nom**                  | action  | message    | Applique la palette ayant ce nom (si elle existe, sinon ne fait rien)                                                                                              |
 | **Effet par numéro**                 | action  | message    | Applique l'effet ayant ce numéro (s'il existe, sinon ne fait rien)                                                                                                 |
 | **Palette par numéro**               | action  | message    | Applique la palette ayant ce numéro (si elle existe, sinon ne fait rien)                                                                                           |
-| **Enregister preset**                | action  | message    | Enregiste l'état actuel dans le preset ayant ce numéro (de 1 à 250)                                                                                                |
-
-Utilisation de la commande action **Preset**
-===
-
-Il faut taper dans le champ Preset soit un numéro de preset à appliquer entre 1 et 250 soit par exemple `"1~4~"` pour enchaîner les preset entre 1 et 4 ou encore `"4~10~r"` pour choisir au hasard un preset entre 4 et 10 compris.
