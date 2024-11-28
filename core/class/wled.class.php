@@ -898,7 +898,11 @@ class wled extends eqLogic {
                 $this->checkAndUpdateCmd('power_state', 0);
             }
             $this->checkAndUpdateCmd('global_brightness_state', $result['bri']);
-            $this->checkAndUpdateCmd('preset_state', $result['ps']);
+            if ($result['pl'] == -1){
+                $this->checkAndUpdateCmd('preset_state', $result['ps']);
+            } else {
+                $this->checkAndUpdateCmd('preset_state', $result['pl']);
+            }
         }
         
         // Etat du segment
