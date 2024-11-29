@@ -146,7 +146,7 @@ class wled extends eqLogic {
     /*
      * Fonction exécutée automatiquement toutes les minutes par Jeedom
      */
-    public static function cron() {
+    public static function cron($type = 'cron') {
         foreach (self::byType('wled') as $eqLogic) {
             $autorefresh = $eqLogic->getConfiguration('autorefresh', '');
             $ipAddress = $eqLogic->getConfiguration('ip_address');
@@ -155,9 +155,7 @@ class wled extends eqLogic {
                     $c = new Cron\CronExpression($autorefresh, new Cron\FieldFactory);
                     if ($c->isDue()) {
                         try {
-                            $eqLogic->getWledStatus();
-                            $eqLogic->getWledInfos();
-                            $eqLogic->refreshWidget();
+                            $eqLogic->getWledAll($type);
                         } catch (Exception $exc) {
                             log::add('wled', 'error', __('Error in ', __FILE__) . $eqLogic->getHumanName() . ' : ' . $exc->getMessage());
                         }
@@ -786,9 +784,7 @@ class wled extends eqLogic {
         $intensityCmd->save();
         $paletteCmd->setValue($paletteStateCmd->getId());
         $paletteCmd->save();
-        $this->getWledEffects();
-        $this->getWledPalettes();
-        $this->getWledPresets();
+        $this->getWledAll('cmd');
     }
 
  // Fonction exécutée automatiquement avant la suppression de l'équipement
@@ -821,49 +817,24 @@ class wled extends eqLogic {
      */
 
     /*     * **********************Getteur Setteur*************************** */
-    public function getWledStatus() {
-        log::add('wled', 'debug', 'Running getWledStatus');
-        $endPoint ='/json/state';
-        $ipAddress = $this->getConfiguration('ip_address');
-        if ($ipAddress != '') {
-            $result = wled::request($ipAddress, $endPoint, null, 'GET', config::byKey('noCronErrors','wled'));
-            log::add('wled', 'debug', 'request result '. $result);
-            $result = is_json($result, $result);
-            if (is_array($result)) {
-                $this->applyState($result);
-            }
+    public function getWledStatus($status) {
+        log::add('wled', 'debug', 'Running getWledStatus with : ' . print_r($status, true));
+        if (is_array($status)) {
+            $this->applyState($status);
         }
     }
 
-    public function getWledEffects() {
-        log::add('wled', 'debug', 'Running getWledEfects');
-        $endPoint ='/json/eff';
-        $ipAddress = $this->getConfiguration('ip_address');
-        if ($ipAddress != '') {
-            $result = wled::request($ipAddress, $endPoint, null, 'GET', false);
-            log::add('wled', 'debug', 'getWledEfects request result '. $result);
-            $result = is_json($result, $result);
-            if (is_array($result)) {
-                $this->updateEffects($result);
-            }
-        } else {
-            log::add('wled', 'debug', 'Error : getWledEfects called with empty ip address');
+    public function getWledEffects($effects) {
+        log::add('wled', 'debug', 'Running getWledEfects with : ' . print_r($effects, true));
+        if (is_array($effects)) {
+            $this->updateEffects($effects);
         }
     }
 
-    public function getWledPalettes() {
-        log::add('wled', 'debug', 'Running getWledPalettes');
-        $endPoint ='/json/pal';
-        $ipAddress = $this->getConfiguration('ip_address');
-        if ($ipAddress != '') {
-            $result = wled::request($ipAddress, $endPoint, null, 'GET', false);
-            log::add('wled', 'debug', 'getWledPalettes request result '. $result);
-            $result = is_json($result, $result);
-            if (is_array($result)) {
-                $this->updatePalettes($result);
-            }
-        } else {
-            log::add('wled', 'debug', 'Error : getWledEfects called with empty ip address');
+    public function getWledPalettes($palettes) {
+        log::add('wled', 'debug', 'Running getWledPalettes with : ' . print_r($palettes, true));
+        if (is_array($palettes)) {
+            $this->updatePalettes($palettes);
         }
     }
     public function getWledPresets() {
@@ -881,19 +852,39 @@ class wled extends eqLogic {
             log::add('wled', 'debug', 'Error : getWledPresets called with empty ip address');
         }
     }
-    public function getWledInfos() {
-        log::add('wled', 'debug', 'Running getWledInfos');
-        $endPoint ='/json/infos';
+    public function getWledInfos($infos) {
+        log::add('wled', 'debug', 'Running getWledInfos with : ' . print_r($infos, true));
+        if (is_array($infos)) {
+            $this->updateInfos($infos);
+        }
+    }
+
+    public function getWledAll($type) {
+        log::add('wled', 'debug', 'Running getWledAll for ' . $type);
+        $endPoint ='/json';
         $ipAddress = $this->getConfiguration('ip_address');
         if ($ipAddress != '') {
             $result = wled::request($ipAddress, $endPoint, null, 'GET', config::byKey('noCronErrors','wled'));
-            log::add('wled', 'debug', 'getWledInfos request result '. $result);
+            log::add('wled', 'debug', 'getWledAll request result '. $result);
             $result = is_json($result, $result);
             if (is_array($result)) {
-                $this->updateInfos($result);
+                if ($type == 'cron'){
+                    $this->getWledStatus($result['state']);
+                    $this->getWledInfos($result['info']);
+                } elseif ($type == 'cmd'){
+                    $this->getWledEffects($result['effects']);
+                    $this->getWledPalettes($result['palettes']);
+                    $this->getWledPresets();
+                } elseif ($type == 'refresh') {
+                    $this->getWledStatus($result['state']);
+                    $this->getWledInfos($result['info']);
+                    $this->getWledEffects($result['effects']);
+                    $this->getWledPalettes($result['palettes']);
+                    $this->getWledPresets();
+                }
             }
         } else {
-            log::add('wled', 'debug', 'Error : getWledInfos called with empty ip address');
+            log::add('wled', 'debug', 'Error : getWledAll called with empty ip address');
         }
     }
 
@@ -1046,12 +1037,17 @@ class wled extends eqLogic {
 
     public function updateInfos($result) {
         log::add('wled', 'debug', 'updateInfos for '. print_r($result, true));
-        $this->setConfiguration('version', $result['ver']);
-        $this->setConfiguration('ledscount', $result['leds']['count']);
-        $this->setConfiguration('ledsmaxpwr', $result['leds']['maxpwr']);
-        $this->setConfiguration('ledsfxcount', $result['fxcount']);
-        $this->setConfiguration('ledspalcount', $result['palcount']);
-        $this->save();
+        if ($this->getConfiguration('version', 0) != $result['ver'] || $this->getConfiguration('ledscount', 0) != $result['leds']['count'] || $this->getConfiguration('ledsmaxpwr', 0) != $result['leds']['maxpwr'] || 
+            $this->getConfiguration('ledsfxcount', 0) != $result['fxcount'] || $this->getConfiguration('ledspalcount', 0) != $result['palcount']) {
+                $this->setConfiguration('version', $result['ver']);
+                $this->setConfiguration('ledscount', $result['leds']['count']);
+                $this->setConfiguration('ledsmaxpwr', $result['leds']['maxpwr']);
+                $this->setConfiguration('ledsfxcount', $result['fxcount']);
+                $this->setConfiguration('ledspalcount', $result['palcount']);
+                $this->save();
+            } else {
+                log::add('wled', 'debug', 'updateInfos : nothing has changed');
+            }
     }
 
 }
@@ -1203,11 +1199,9 @@ class wledCmd extends cmd {
         log::add('wled', 'debug', 'execute request result '. $result);
 
         if ($eqLogic->getConfiguration('segment') == 0){
-            $eqLogic->cron();
+            $eqLogic->cron('refresh');
         } else {
-            $eqLogic->getWledInfos();
-            $eqLogic->getWledStatus();
-            $eqLogic->refreshWidget();
+            $eqLogic->getWledAll('refresh');
         }
 
 
