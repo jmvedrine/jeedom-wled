@@ -130,3 +130,12 @@ Commandes sur chaque segment (y compris le segment 0)
 | **Palette par nom**                  | action  | message    | Applique la palette ayant ce nom (si elle existe, sinon ne fait rien)                                                                                              |
 | **Effet par numéro**                 | action  | message    | Applique l'effet ayant ce numéro (s'il existe, sinon ne fait rien)                                                                                                 |
 | **Palette par numéro**               | action  | message    | Applique la palette ayant ce numéro (si elle existe, sinon ne fait rien)                                                                                           |
+
+## FAQ
+
+### Pourquoi lors de la découverte le plugin ne trouve pas mes WLED ?
+
+Le protocole mDNS utilisé pour la découverte ne traverse pas les sous-réseaux sans aide. Donc si vous n'avez pas des connaissances réseau approfondies, il faut que la machine Jeedom et les contrôleurs WLED soient dans le même sous réseau, sinon la découverte ne fonctionnera pas.
+
+Dans la configuration WLED rubrique "WiFi setup" il y a un champ "mDNS adress (leave empty for no mDNS)". La valeur par défaut est de la forme http:// puis "wled-" suivi de caractères aléatoires et enfin ".local". Si vous modifiez la partie centrale
+il faut absolument qu'elle contienne les caractères "wled-" pour que la découverte fonctionne. Prenez aussi garde à ce que 2 machines sur votre réseau local n'aient pas la même adresse mDNS.

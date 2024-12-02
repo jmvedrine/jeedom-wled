@@ -49,7 +49,17 @@ Désormais les commandes On, Off et Luminosité n'agissent plus que sur le segme
 L'ancienne commande action message Preset est renommée Preset par numéro et une nouvelle commande action liste Preset fait son apparition avec la commande info numérique associée Etat preset.
 Les commandes relatives aux presets n'existent que sur le segment 0 puisqu'elles s'appliquent à tous les segments.
 
-#24/11/2024
+# 24/11/2024
 
 Pour la commande **Enregistrer preset**, il est possible de donner un nom au preset avec la syntaxe numéro:nom
+
+# 30/11/2024
+
+Ajout d'un commande **Rafraîchir** pour le segment 0.
+
+Pour les playlists affichage de "Playlist " devant le nom de la playlist.
+
+Ajout du preset "Aucun" dans la commande **Preset** pour arrêter une playlist (pour la commande **Preset par numéro**, passer -1 dans le message a le même effet).
+
+Ajout d'une FAQ dans la doc avec des conseils si la découverte des WLED ne trouve rien.
 

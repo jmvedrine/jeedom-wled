@@ -146,7 +146,7 @@ class wled extends eqLogic {
     /*
      * Fonction exécutée automatiquement toutes les minutes par Jeedom
      */
-    public static function cron() {
+    public static function cron($type = 'cron') {
         foreach (self::byType('wled') as $eqLogic) {
             $autorefresh = $eqLogic->getConfiguration('autorefresh', '');
             $ipAddress = $eqLogic->getConfiguration('ip_address');
@@ -155,9 +155,7 @@ class wled extends eqLogic {
                     $c = new Cron\CronExpression($autorefresh, new Cron\FieldFactory);
                     if ($c->isDue()) {
                         try {
-                            $eqLogic->getWledStatus();
-                            $eqLogic->getWledInfos();
-                            $eqLogic->refreshWidget();
+                            $eqLogic->getWledAll($type);
                         } catch (Exception $exc) {
                             log::add('wled', 'error', __('Error in ', __FILE__) . $eqLogic->getHumanName() . ' : ' . $exc->getMessage());
                         }
@@ -402,6 +400,17 @@ class wled extends eqLogic {
                 $psaveCmd->setOrder(32);
                 $psaveCmd->save();
             }
+            $prefreshCmd = $this->getCmd(null, "refresh");
+            if (!is_object($prefreshCmd)) {
+                $prefreshCmd = new wledCmd();
+                $prefreshCmd->setName(__('Rafraîchir', __FILE__));
+                $prefreshCmd->setEqLogic_id($this->getId());
+                $prefreshCmd->setLogicalId('refresh');
+                $prefreshCmd->setType('action');
+                $prefreshCmd->setSubType('other');
+                $prefreshCmd->save();
+            }      
+            
             // Liens entre les commandes
             $powerOnCmd->setValue($powerStateCmd->getId());
             $powerOnCmd->save();
@@ -775,9 +784,7 @@ class wled extends eqLogic {
         $intensityCmd->save();
         $paletteCmd->setValue($paletteStateCmd->getId());
         $paletteCmd->save();
-        $this->getWledEffects();
-        $this->getWledPalettes();
-        $this->getWledPresets();
+        $this->getWledAll('cmd');
     }
 
  // Fonction exécutée automatiquement avant la suppression de l'équipement
@@ -810,49 +817,24 @@ class wled extends eqLogic {
      */
 
     /*     * **********************Getteur Setteur*************************** */
-    public function getWledStatus() {
-        log::add('wled', 'debug', 'Running getWledStatus');
-        $endPoint ='/json/state';
-        $ipAddress = $this->getConfiguration('ip_address');
-        if ($ipAddress != '') {
-            $result = wled::request($ipAddress, $endPoint, null, 'GET', config::byKey('noCronErrors','wled'));
-            log::add('wled', 'debug', 'request result '. $result);
-            $result = is_json($result, $result);
-            if (is_array($result)) {
-                $this->applyState($result);
-            }
+    public function getWledStatus($status) {
+        log::add('wled', 'debug', 'Running getWledStatus with : ' . print_r($status, true));
+        if (is_array($status)) {
+            $this->applyState($status);
         }
     }
 
-    public function getWledEffects() {
-        log::add('wled', 'debug', 'Running getWledEfects');
-        $endPoint ='/json/eff';
-        $ipAddress = $this->getConfiguration('ip_address');
-        if ($ipAddress != '') {
-            $result = wled::request($ipAddress, $endPoint, null, 'GET', false);
-            log::add('wled', 'debug', 'getWledEfects request result '. $result);
-            $result = is_json($result, $result);
-            if (is_array($result)) {
-                $this->updateEffects($result);
-            }
-        } else {
-            log::add('wled', 'debug', 'Error : getWledEfects called with empty ip address');
+    public function getWledEffects($effects) {
+        log::add('wled', 'debug', 'Running getWledEfects with : ' . print_r($effects, true));
+        if (is_array($effects)) {
+            $this->updateEffects($effects);
         }
     }
 
-    public function getWledPalettes() {
-        log::add('wled', 'debug', 'Running getWledPalettes');
-        $endPoint ='/json/pal';
-        $ipAddress = $this->getConfiguration('ip_address');
-        if ($ipAddress != '') {
-            $result = wled::request($ipAddress, $endPoint, null, 'GET', false);
-            log::add('wled', 'debug', 'getWledPalettes request result '. $result);
-            $result = is_json($result, $result);
-            if (is_array($result)) {
-                $this->updatePalettes($result);
-            }
-        } else {
-            log::add('wled', 'debug', 'Error : getWledEfects called with empty ip address');
+    public function getWledPalettes($palettes) {
+        log::add('wled', 'debug', 'Running getWledPalettes with : ' . print_r($palettes, true));
+        if (is_array($palettes)) {
+            $this->updatePalettes($palettes);
         }
     }
     public function getWledPresets() {
@@ -870,19 +852,39 @@ class wled extends eqLogic {
             log::add('wled', 'debug', 'Error : getWledPresets called with empty ip address');
         }
     }
-    public function getWledInfos() {
-        log::add('wled', 'debug', 'Running getWledInfos');
-        $endPoint ='/json/infos';
+    public function getWledInfos($infos) {
+        log::add('wled', 'debug', 'Running getWledInfos with : ' . print_r($infos, true));
+        if (is_array($infos)) {
+            $this->updateInfos($infos);
+        }
+    }
+
+    public function getWledAll($type) {
+        log::add('wled', 'debug', 'Running getWledAll for ' . $type);
+        $endPoint ='/json';
         $ipAddress = $this->getConfiguration('ip_address');
         if ($ipAddress != '') {
             $result = wled::request($ipAddress, $endPoint, null, 'GET', config::byKey('noCronErrors','wled'));
-            log::add('wled', 'debug', 'getWledInfos request result '. $result);
+            log::add('wled', 'debug', 'getWledAll request result '. $result);
             $result = is_json($result, $result);
             if (is_array($result)) {
-                $this->updateInfos($result);
+                if ($type == 'cron'){
+                    $this->getWledStatus($result['state']);
+                    $this->getWledInfos($result['info']);
+                } elseif ($type == 'cmd'){
+                    $this->getWledEffects($result['effects']);
+                    $this->getWledPalettes($result['palettes']);
+                    $this->getWledPresets();
+                } elseif ($type == 'refresh') {
+                    $this->getWledStatus($result['state']);
+                    $this->getWledInfos($result['info']);
+                    $this->getWledEffects($result['effects']);
+                    $this->getWledPalettes($result['palettes']);
+                    $this->getWledPresets();
+                }
             }
         } else {
-            log::add('wled', 'debug', 'Error : getWledInfos called with empty ip address');
+            log::add('wled', 'debug', 'Error : getWledAll called with empty ip address');
         }
     }
 
@@ -898,62 +900,82 @@ class wled extends eqLogic {
                 $this->checkAndUpdateCmd('power_state', 0);
             }
             $this->checkAndUpdateCmd('global_brightness_state', $result['bri']);
-            $this->checkAndUpdateCmd('preset_state', $result['ps']);
+            if ($result['pl'] == -1){
+                $this->checkAndUpdateCmd('preset_state', $result['ps']);
+            } else {
+                $this->checkAndUpdateCmd('preset_state', $result['pl']);
+            }
         }
         
         // Etat du segment
-        // A revoir utiliser segment "id"
-        $segment = $result['seg'][$numseg];
-        log::add('wled', 'debug', 'Traitement segment '. print_r($segment, true));
-        $info = $segment['on'];
-        if ($info) {
-            $this->checkAndUpdateCmd('state', 1);
-        } else {
-            $this->checkAndUpdateCmd('state', 0);
-        }
-        $info = $segment['bri'];
-        $this->checkAndUpdateCmd('brightness_state', $info);
-        $effectNumber = $segment['fx'];
-        $this->checkAndUpdateCmd('effect_state', $effectNumber);
-        $effectCmd = $this->getCmd(null, "effect");
-        if (is_object($effectCmd)) {
-            $elements = explode(';', $effectCmd->getConfiguration('listValue', ''));
-            foreach ($elements as $element) {
-                $coupleArray = explode('|', $element);
-                if ($effectNumber == $coupleArray[0]) {
-                    $this->checkAndUpdateCmd('effect_name', $coupleArray[1]);
+        $segments = $result['seg'];
+        foreach($segments as $segment){
+            if ($segment['id'] == $numseg){
+                log::add('wled', 'debug', 'applyState for segment '. intval($numseg) . ' sur ' . count($segments) . ' segment(s) : ' . print_r($segment, true));
+                $infoseg = $segment['on'];
+                $info = $result['on'];
+                log::add('wled', 'debug', 'applyState for segment '. intval($numseg) . ' sur ' . count($segments) . ' segment(s), état : ' . $infoseg . ' ' . $info . ' ' . $numseg . ' ' . count($segments));
+                if ($infoseg && $info && ($numseg != 0 || count($segments) == 1)) { // la couleur n'est pas appliquée si 'off' ou au segment 0 s'il n'est pas le seul
+                    $this->checkAndUpdateCmd('state', 1);
+                    $mainColor = $segment['col'][0];
+                    log::add('wled', 'debug', 'segment '. intval($numseg) . ' main color : '. print_r($mainColor, true));
+                    $value = '#' . sprintf('%02x', $mainColor[0]) . sprintf('%02x', $mainColor[1]) . sprintf('%02x', $mainColor[2]);
+                    log::add('wled', 'debug', 'segment '. intval($numseg) . ' main color value : '. $value);
+                    $this->checkAndUpdateCmd('color_state', $value);
+                    $bgColor = $segment['col'][1];
+                    log::add('wled', 'debug', 'segment '. intval($numseg) . ' bg color : '. print_r($bgColor, true));
+                    $value = '#' . sprintf('%02x', $bgColor[0]) . sprintf('%02x', $bgColor[1]) . sprintf('%02x', $bgColor[2]);
+                    log::add('wled', 'debug', 'segment '. intval($numseg) . ' color bg value : '. $value);
+                    $this->checkAndUpdateCmd('color_state_bg', $value);
+                    $thirdColor = $segment['col'][2];
+                    log::add('wled', 'debug', 'segment '. intval($numseg) . ' third color : '. print_r($thirdColor, true));
+                    $value = '#' . sprintf('%02x', $thirdColor[0]) . sprintf('%02x', $thirdColor[1]) . sprintf('%02x', $thirdColor[2]);
+                    log::add('wled', 'debug', 'segment '. intval($numseg) . ' color third value : '. $value);
+                    $this->checkAndUpdateCmd('color_state_third', $value);
+                    $value = $segment['bri'];
+                    $this->checkAndUpdateCmd('brightness_state', $value);
+                } else {
+                    $value = '#000000';
+                    log::add('wled', 'debug', 'segment '. intval($numseg) . ' main color : off');
+                    log::add('wled', 'debug', 'segment '. intval($numseg) . ' main color value : ' . $value);
+                    log::add('wled', 'debug', 'segment '. intval($numseg) . ' bg color : off');
+                    log::add('wled', 'debug', 'segment '. intval($numseg) . ' color bg value '. $value);
+                    log::add('wled', 'debug', 'segment '. intval($numseg) . ' third color : off');
+                    log::add('wled', 'debug', 'segment '. intval($numseg) . ' color third value '. $value);
+                    $this->checkAndUpdateCmd('state', 0);
+                    $this->checkAndUpdateCmd('color_state', $value);
+                    $this->checkAndUpdateCmd('color_state_bg', $value);
+                    $this->checkAndUpdateCmd('color_state_third', $value);
+                    $this->checkAndUpdateCmd('brightness_state', intval(0));
+                    }
+                $effectNumber = $segment['fx'];
+                $this->checkAndUpdateCmd('effect_state', $effectNumber);
+                $effectCmd = $this->getCmd(null, "effect");
+                if (is_object($effectCmd)) {
+                    $elements = explode(';', $effectCmd->getConfiguration('listValue', ''));
+                    foreach ($elements as $element) {
+                        $coupleArray = explode('|', $element);
+                        if ($effectNumber == $coupleArray[0]) {
+                            $this->checkAndUpdateCmd('effect_name', $coupleArray[1]);
+                        }
+                    }
                 }
+                $paletteNumber = $segment['pal'];
+                $this->checkAndUpdateCmd('palette_state', $paletteNumber);
+                $paletteCmd = $this->getCmd(null, "palette");
+                if (is_object($paletteCmd)) {
+                    $elements = explode(';', $paletteCmd->getConfiguration('listValue', ''));
+                    foreach ($elements as $element) {
+                        $coupleArray = explode('|', $element);
+                        if ($paletteNumber == $coupleArray[0]) {
+                            $this->checkAndUpdateCmd('palette_name', $coupleArray[1]);
+                        }
+                    }
+                }
+                $this->checkAndUpdateCmd('speed_state', $segment['sx']);
+                $this->checkAndUpdateCmd('intensity_state', $segment['ix']);
             }
         }
-        $paletteNumber = $segment['pal'];
-        $this->checkAndUpdateCmd('palette_state', $paletteNumber);
-        $paletteCmd = $this->getCmd(null, "palette");
-        if (is_object($paletteCmd)) {
-            $elements = explode(';', $paletteCmd->getConfiguration('listValue', ''));
-            foreach ($elements as $element) {
-                $coupleArray = explode('|', $element);
-                if ($paletteNumber == $coupleArray[0]) {
-                    $this->checkAndUpdateCmd('palette_name', $coupleArray[1]);
-                }
-            }
-        }
-        $this->checkAndUpdateCmd('speed_state', $segment['sx']);
-        $this->checkAndUpdateCmd('intensity_state', $segment['ix']);
-        log::add('wled', 'debug', 'segment '. print_r($segment, true));
-
-        $mainColor = $segment['col'][0];
-        log::add('wled', 'debug', 'main color '. print_r($mainColor, true));
-        log::add('wled', 'debug', 'bg color '. print_r($bgColor, true));
-        log::add('wled', 'debug', 'third color '. print_r($thirdColor, true));
-        $value = '#' . sprintf('%02x', $mainColor[0]) . sprintf('%02x', $mainColor[1]) . sprintf('%02x', $mainColor[2]);
-        log::add('wled', 'debug', 'color value '. $value);
-        $this->checkAndUpdateCmd('color_state', $value);
-        $value = '#' . sprintf('%02x', $bgColor[0]) . sprintf('%02x', $bgColor[1]) . sprintf('%02x', $bgColor[2]);
-        log::add('wled', 'debug', 'color bg value '. $value);
-        $this->checkAndUpdateCmd('color_state_bg', $value);
-        $value = '#' . sprintf('%02x', $thirdColor[0]) . sprintf('%02x', $thirdColor[1]) . sprintf('%02x', $thirdColor[2]);
-        log::add('wled', 'debug', 'color third value '. $value);
-        $this->checkAndUpdateCmd('color_state_third', $value);
     }
 
     public function updateEffects($result) {
@@ -995,9 +1017,13 @@ class wled extends eqLogic {
         $presets = array();
         foreach ($result as $k => $preset) {
             if (isset($preset['n']) && $preset['n'] != '') {
-                $presets[] = $k . '|' . $preset['n'];
+                if (isset($preset['playlist'])){
+                    $presets[] = $k . '|Playlist : ' . $preset['n']; //affiche 'Playlist : ' devant le nom de la playlist
+                } else {
+                    $presets[] = $k . '|' . $preset['n'];
+                }
             } else {
-                $presets[] = $k . '|Preset ' . $k;
+                $presets[] = '-1|Aucun';
             }
         }
         $listPresets = implode(';', $presets);
@@ -1011,13 +1037,19 @@ class wled extends eqLogic {
 
     public function updateInfos($result) {
         log::add('wled', 'debug', 'updateInfos for '. print_r($result, true));
-        $this->setConfiguration('version', $result['ver']);
-        $this->setConfiguration('ledscount', $result['leds']['count']);
-        $this->setConfiguration('ledsmaxpwr', $result['leds']['maxpwr']);
-        $this->setConfiguration('ledsfxcount', $result['fxcount']);
-        $this->setConfiguration('ledspalcount', $result['palcount']);
-        $this->save();
+        if ($this->getConfiguration('version', 0) != $result['ver'] || $this->getConfiguration('ledscount', 0) != $result['leds']['count'] || $this->getConfiguration('ledsmaxpwr', 0) != $result['leds']['maxpwr'] || 
+            $this->getConfiguration('ledsfxcount', 0) != $result['fxcount'] || $this->getConfiguration('ledspalcount', 0) != $result['palcount']) {
+                $this->setConfiguration('version', $result['ver']);
+                $this->setConfiguration('ledscount', $result['leds']['count']);
+                $this->setConfiguration('ledsmaxpwr', $result['leds']['maxpwr']);
+                $this->setConfiguration('ledsfxcount', $result['fxcount']);
+                $this->setConfiguration('ledspalcount', $result['palcount']);
+                $this->save();
+            } else {
+                log::add('wled', 'debug', 'updateInfos : nothing has changed');
+            }
     }
+
 }
 
 class wledCmd extends cmd {
@@ -1041,6 +1073,7 @@ class wledCmd extends cmd {
 
   // Exécution d'une commande
     public function execute($_options = array()) {
+        log::add('wled', 'debug', 'execute action '. $this->getLogicalId());
         if ($this->getType() != 'action') {
             return;
         }
@@ -1089,9 +1122,17 @@ class wledCmd extends cmd {
         } else if ($action == 'intensity') {
             $data = '{"seg":[{"id":' . $segment . ', "sx":' . intval($_options['slider']) . '}]}';
         } else if ($action == 'preset') {
-            $data = '{"ps":' . $_options['message']  . '}';
+            if ($_options['message'] == -1){
+                $data = '{"seg":[{"id":0, "fx":0}]}'; //la seule façon que j'ai trouvé pour arréter une playlist c'est d'appliquer un effet (c'est pareil dans l'appli web) {"ps":-1,"pl":-1} ne fonctionne pas...
+            } else {
+                $data = '{"ps":' . $_options['message']  . '}';
+            }
         } else if ($action == 'presetbylist') {
-            $data = '{"ps":' . intval($_options['select']) . '}';
+            if ($_options['select'] == -1){
+                $data = '{"seg":[{"id":0, "fx":0}]}'; //la seule façon que j'ai trouvé pour arréter une playlist c'est d'appliquer un effet (c'est pareil dans l'appli web) {"ps":-1,"pl":-1} ne fonctionne pas...
+            } else {
+                $data = '{"ps":' . intval($_options['select']) . '}';
+            }
         } else if ($action == 'psave') {
             $message = explode(':',$_options['message']);
             if (isset($message[1]) && $message[1] != '') {
@@ -1150,13 +1191,20 @@ class wledCmd extends cmd {
                 }
             }
         }
+
         log::add('wled', 'debug', 'execute data '. $data);
         $endPoint ='/json/state';
         $ipAddress = $eqLogic->getConfiguration('ip_address');
         $result = wled::request($ipAddress, $endPoint, $data, 'POST', false);
         log::add('wled', 'debug', 'execute request result '. $result);
-        $eqLogic->getWledStatus();
-        $eqLogic->refreshWidget();
+
+        if ($eqLogic->getConfiguration('segment') == 0){
+            $eqLogic->cron('refresh');
+        } else {
+            $eqLogic->getWledAll('refresh');
+        }
+
+
     }
 
     /*     * **********************Getteur Setteur*************************** */
