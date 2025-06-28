@@ -157,7 +157,7 @@ class wled extends eqLogic {
                         try {
                             $eqLogic->getWledAll($type);
                         } catch (Exception $exc) {
-                            log::add('wled', 'error', __('Error in ', __FILE__) . $eqLogic->getHumanName() . ' : ' . $exc->getMessage());
+                            log::add('wled', 'error', __('Error in ', __FILE__) . $eqLogic->getHumanName() . ' : ' . preg_replace('/after \d+ ms/', '', $exc->getMessage()) );
                         }
                     }
                 } catch (Exception $exc) {
