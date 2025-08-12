@@ -74,7 +74,22 @@ require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
                     $powerOnCmd->setOrder(0);
                     $powerOnCmd->save();
                 }
-
+                $mainSegment = $eqLogic->getConfiguration('mainSegment', '');
+                if ($mainSegment == '') {
+                    log::add('wled', 'debug', 'Retrieving missing main segment');
+                    $ip = $eqLogic->getConfiguration('ip_address');
+                    $state = wled::request($ip, '/json/state', null, 'GET', false);
+                    log::add('wled', 'debug', 'state : ' . $state);
+                    $state = is_json($state, $state);
+                    if(isset($state['mainseg']) && $state['mainseg'] != ''){
+                        $mainSegment = $state['mainseg'];
+                    } else {
+                        $mainSegment = 0;
+                    }
+                    log::add('wled', 'debug', 'Segment principal '. $mainSegment);
+                    $eqLogic->setConfiguration('mainSegment', $mainSegment);
+                    $eqLogic->save();
+                }
                 $powerOffCmd = $eqLogic->getCmd(null, "power_off");
                 if (!is_object($powerOffCmd)) {
                     $powerOffCmd = new wledCmd();

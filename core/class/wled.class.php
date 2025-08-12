@@ -99,7 +99,11 @@ class wled extends eqLogic {
                         $state = self::request($ip, '/json/state', null, 'GET', false);
                         log::add('wled', 'debug', 'state : ' . $state);
                         $state = is_json($state, $state);
-                        $mainSegment = $state['mainseg'];
+                        if(isset($state['mainseg']) && $state['mainseg'] != ''){
+                            $mainSegment = $state['mainseg'];
+                        } else {
+                            $mainSegment = 0;
+                        }
                         log::add('wled', 'debug', 'Segment principal '. $mainSegment);
                         $segments = $state['seg'];
                         foreach ($segments as $segment) {
@@ -117,7 +121,7 @@ class wled extends eqLogic {
                                 $eqLogic->setEqType_name('wled');
                                 $eqLogic->setLogicalId($ip . '_seg' .$numseg);
                                 $eqLogic->setIsEnable(1);
-                                if ($numseg == 0) {
+                                if ($numseg == $mainSegment) {
                                     $eqLogic->setName($friendlyName);
                                 } else {
                                     $eqLogic->setName($friendlyName . ' segment ' . $numseg);
@@ -126,6 +130,7 @@ class wled extends eqLogic {
                                 $eqLogic->setIsVisible(1);
                                 $eqLogic->setConfiguration('ip_address', $ip);
                                 $eqLogic->setConfiguration('segment', $numseg);
+                                $eqLogic->setConfiguration('mainSegment', $mainSegment);
                                 $eqLogic->setConfiguration('autorefresh', '* * * * *');
                                 $eqLogic->updateInfos($infos);
                                 $eqLogic->setConfiguration('segledscount', $segment['stop'] - $segment['start']);
@@ -268,7 +273,8 @@ class wled extends eqLogic {
     public function postSave() {
         // Création des commandes
         $numseg = $this->getConfiguration('segment', 0);
-        if ($numseg == 0) {
+        $mainSegment = $this->getConfiguration('mainSegment', 0);
+        if ($numseg == $mainSegment) {
             // création des commandes globales
             $powerOnCmd = $this->getCmd(null, "power_on");
             if (!is_object($powerOnCmd)) {
@@ -891,7 +897,8 @@ class wled extends eqLogic {
     public function applyState($result) {
         log::add('wled', 'debug', 'applyState for '. print_r($result, true));
         $numseg = $this->getConfiguration('segment', 0);
-        if ($numseg == 0) {
+        $mainSegment = $this->getConfiguration('mainSegment', 0);
+        if ($numseg == $mainSegment) {
             // Etat global du ruban
             $info = $result['on'];
             if ($info) {
@@ -1080,6 +1087,7 @@ class wledCmd extends cmd {
 
         $eqLogic = $this->getEqLogic();
         $segment = $eqLogic->getConfiguration('segment', 0);
+        $mainSegment = $eqLogic->getConfiguration('mainSegment', 0);
         $action= $this->getLogicalId();
         log::add('wled', 'debug', 'execute action '. $action);
         log::add('wled', 'debug', 'execute options '. print_r($_options, true));
@@ -1198,7 +1206,7 @@ class wledCmd extends cmd {
         $result = wled::request($ipAddress, $endPoint, $data, 'POST', false);
         log::add('wled', 'debug', 'execute request result '. $result);
 
-        if ($eqLogic->getConfiguration('segment') == 0){
+        if ($segment == $mainSegment){
             $eqLogic->cron('refresh');
         } else {
             $eqLogic->getWledAll('refresh');
