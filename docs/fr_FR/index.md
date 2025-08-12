@@ -55,7 +55,7 @@ Création des équipements
 Vous pouvez cliquer sur le bouton Découverte et le plugin scannera votre réseau local à la recherche des contrôleurs Wled. Pour chaque équipement il récupérera l'adresse IP et le nom. Il ne vous restera plus qu'à les placer dans la pièce de votre choix pour pouvoir les utiliser. Par défaut l'intervalle d'actualisation est initialisé à "toutes les minutes" mais vous pouvez le changer.
 
 Si dans l'appli smartphone (ou dans l'interface web) vous avez défini plusieurs segments, un objet Jeedom sera créé pour chaque segment.
-Pour le segment principal (segment 0), il y a des commandes supplémentaires (Ruban on, Ruban off et Luminosité globale) qui agissent sur toutes les leds branchées sur le contrôleur situé à cette IP (et il faut noter que la commande Ruban off réinitialise les effets pour tous les segments). Toutes les autres commandes agissent sur le segment concerné uniquement.
+Pour le segment principal (en principe c'est le segment 0 mais cela peut être changé dans l'appli smartphone), il y a des commandes supplémentaires (Ruban on, Ruban off et Luminosité globale) qui agissent sur toutes les leds branchées sur le contrôleur situé à cette IP (et il faut noter que la commande Ruban off réinitialise les effets pour tous les segments). Toutes les autres commandes agissent sur le segment concerné uniquement.
 
 
 ## Création manuelle des équipements
@@ -76,7 +76,7 @@ Commandes
 Commandes propres au segment 0 (segment principal)
 ===
 
-Le segment 0 possède des commandes supplémentaires globales.
+Le segment principal (en principe 0) possède des commandes supplémentaires globales.
 Ces commandes agissent sur la totalité du ou des équipements reliés à ce contrôleur WLED (donc sur tous les segments).
 
 Ruban on, Ruban off et Ruban luminosité sont équivalentes au bouton et au curseur de la page d'accueil de l'application smartphone. 
@@ -100,7 +100,7 @@ Pour la commande **Enregistrer preset**, il est possible de donner un nom au pre
 
 Pour la commande **Preset par numéro**, il faut taper dans le champ Preset soit un numéro de preset à appliquer entre 1 et 250 soit par exemple `"1~4~"` pour enchaîner les preset entre 1 et 4 ou encore `"4~10~r"` pour choisir au hasard un preset entre 4 et 10 compris.
 
-Commandes sur chaque segment (y compris le segment 0)
+Commandes sur chaque segment (y compris le segment principal)
 ===
 
 | Nom                                  | Type    | Sous type  | Rôle                                                                                                                                                               |
@@ -139,3 +139,12 @@ Le protocole mDNS utilisé pour la découverte ne traverse pas les sous-réseaux
 
 Dans la configuration WLED rubrique "WiFi setup" il y a un champ "mDNS adress (leave empty for no mDNS)". La valeur par défaut est de la forme http:// puis "wled-" suivi de caractères aléatoires et enfin ".local". Si vous modifiez la partie centrale
 il faut absolument qu'elle contienne les caractères "wled-" pour que la découverte fonctionne. Prenez aussi garde à ce que 2 machines sur votre réseau local n'aient pas la même adresse mDNS.
+
+### Pourquoi dans le widget de mon équipement j'ai 2 ampoules ?
+
+J'avoue que c'est source de confusion mais pour le segment principal il y a à la fois une ampoule qui agit sur le (ou les) ruban(s) entiers 
+connecté(s) au contrôleur WLED et une ampoule qui n'agit que sur le segment correspondant à cet équipement.
+
+Si vous n'avez qu'un segment mon conseil est de masquer les commandes correspondant au segment (**On** et **Off**) qui ne servent à rien et de ne conserver de visibles que les commandes ** Ruban on** et **Ruban off** comme çà vous n'aurez qu'une ampoule sur votre widget.
+
+Une remarque : si le ruban entier est éteint (par example par la commande **Ruban off**) la commande de segment **On** est inopérante mais si vous réfléchissez c'est assez logique.
