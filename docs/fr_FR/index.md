@@ -145,6 +145,6 @@ il faut absolument qu'elle contienne les caractères "wled-" pour que la découv
 J'avoue que c'est source de confusion mais pour le segment principal il y a à la fois une ampoule qui agit sur le (ou les) ruban(s) entiers 
 connecté(s) au contrôleur WLED et une ampoule qui n'agit que sur le segment correspondant à cet équipement.
 
-Si vous n'avez qu'un segment mon conseil est de masquer les commandes correspondant au segment (**On** et **Off**) qui ne servent à rien et de ne conserver de visibles que les commandes ** Ruban on** et **Ruban off** comme çà vous n'aurez qu'une ampoule sur votre widget.
+Si vous n'avez qu'un segment mon conseil est de masquer les commandes correspondant au segment (**On** et **Off**) qui ne servent à rien et de ne conserver de visibles que les commandes **Ruban on** et **Ruban off** comme çà vous n'aurez qu'une ampoule sur votre widget.
 
 Une remarque : si le ruban entier est éteint (par example par la commande **Ruban off**) la commande de segment **On** est inopérante mais si vous réfléchissez c'est assez logique.
