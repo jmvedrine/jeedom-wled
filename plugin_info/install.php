@@ -90,6 +90,11 @@ require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
                     $eqLogic->setConfiguration('mainSegment', $mainSegment);
                     $eqLogic->save();
                 }
+                if ($eqLogic->getConfiguration('autorefresh', '') == '') {
+					log::add('wled', 'debug', 'Fix missing autorefresh');
+                    $eqLogic->setConfiguration('autorefresh', '* * * * *');
+                    $eqLogic->save();
+                }
                 $powerOffCmd = $eqLogic->getCmd(null, "power_off");
                 if (!is_object($powerOffCmd)) {
                     $powerOffCmd = new wledCmd();

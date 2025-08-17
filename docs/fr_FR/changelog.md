@@ -63,6 +63,10 @@ Ajout du preset "Aucun" dans la commande **Preset** pour arrêter une playlist (
 
 Ajout d'une FAQ dans la doc avec des conseils si la découverte des WLED ne trouve rien.
 
-#12/08/2025
+# 12/08/2025
 
 Meilleure gestion du segment principal : le plugin doit maintenant fonctionner même si le segment principal n'est pas le segment 0. De plus un bug a été corrigé dans les commandes infos qui ne fonctionnaient pas correctement si le numéro du segment était vide dans l'équipement.
+
+# 17 08/2025
+
+Amélioration de la mise à jour après une commande action : elle est maintenant indépendante du cron et seuls les segment du ruban en question sont mis à jour.
