@@ -1207,8 +1207,15 @@ class wledCmd extends cmd {
         log::add('wled', 'debug', 'execute request result '. $result);
 
         if ($segment == $mainSegment){
-            $eqLogic->cron('refresh');
+			// In that case we need to update infos for all segments.
+			foreach (eqLogic::byType('wled') as $equipement) {
+				if ($equipement->getConfiguration('ip_address') == $ipAddress) {
+					// It's a segment of the same controller.
+					$equipement->getWledAll('refresh');
+				}
+			}
         } else {
+			// Just update that equipement.
             $eqLogic->getWledAll('refresh');
         }
 
